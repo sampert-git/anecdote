@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.springboot.anecdote.dao.AnecdoteDao">
+    <resultMap id="BaseResultMap" type="com.springboot.anecdote.entity.Anecdote">
+        <result property="anecId" column="anec_id"/>
+        <result property="anecPerson" column="anec_person"/>
+        <result property="anecTitle" column="anec_title"/>
+        <result property="anecContent" column="anec_content"/>
+        <result property="anecCreateTime" column="anec_createtime"/>
+        <result property="anecCreateId" column="anec_createid"/>
+        <result property="anecImgPath" column="anec_imgpath"/>
+        <result property="anecCreateName" column="user_name"/>
+    </resultMap>
+    
+    <sql id="selectJoin">
+        select
+        a.anec_id,a.anec_person,a.anec_title,a.anec_content,a.anec_createtime,a.anec_createid,a.anec_imgpath,
+        u.user_name
+        from anecdote a
+        left join user u
+        on a.anec_createid=u.user_id
+    </sql>
+
+    <!-- 查找Anecdotes列表 -->
+    <select id="findListAnecdotes" parameterType="String" resultMap="BaseResultMap">
+        <include refid="selectJoin"/>
+        <where>
+            <if test="keyword!=null">
+                anec_person like concat('%',#{keyword},'%')
+                or anec_title like concat('%',#{keyword},'%')
+                or anec_content like concat('%',#{keyword},'%')
+            </if>
+        </where>
+        order by a.anec_id desc
+    </select>
+
+    <!-- 根据id查找Anecdote -->
+    <select id="findAnecdoteById" parameterType="Integer" resultMap="BaseResultMap">
+        <include refid="selectJoin"/>
+        where anec_id=#{id}
+    </select>
+
+    <!-- 根据创建人id查找Anecdotes列表 -->
+    <select id="findAnecsByCreUser" parameterType="Integer" resultMap="BaseResultMap">
+        <include refid="selectJoin"/>
+        where anec_createid=#{createId}
+        order by a.anec_id desc
+    </select>
+
+    <!-- 添加Anecdote -->
+    <insert id="addAnecdote" parameterType="Anecdote">
+        insert into anecdote(anec_person,anec_title,anec_content,anec_createtime,anec_createid
+        <if test="anecImgPath!=null">
+            ,anec_imgpath
+        </if>
+        )
+        values (#{anecPerson},#{anecTitle},#{anecContent},now(),#{anecCreateId}
+        <if test="anecImgPath!=null">
+            ,#{anecImgPath}
+        </if>
+        )
+    </insert>
+
+    <!-- 更新Anecdote -->
+    <update id="updateAnecdote" parameterType="Anecdote">
+        update anecdote set anec_person=#{anecPerson},
+            anec_title=#{anecTitle},
+            anec_content=#{anecContent}
+        where anec_id=#{anecId}
+    </update>
+
+    <!-- 根据ID删除Anecdote -->
+    <delete id="deleteAnecdote" parameterType="Integer">
+        delete from anecdote where anec_id=#{id}
+    </delete>
+</mapper>

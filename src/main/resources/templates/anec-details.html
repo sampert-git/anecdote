@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="zh-cn" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>帖子详情</title>
+	<link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">  
+	<link rel="shortcut icon" href="../static/imgs/favicon.ico" th:href="@{/static/imgs/favicon.ico}">
+	<style>
+		#navbar-header {margin-left: 10%;}
+		#navbar-right {margin-right: 11%;}
+		#form-search {margin-left: 9%;}
+		#input-search {width: 280px;}
+		.img-navbar {
+			width: 100px;
+			position: relative;
+			bottom: 18px;
+		}
+		.row-one-margin {
+			margin-top: 50px;
+			margin-bottom: 15px;
+		}
+		.img-anec-details {
+			width: 600px;
+		}
+		.column-content {
+			padding: 30px 150px;
+			background-color: #fff;
+		}
+		.text-pre {white-space: pre-wrap;}
+	</style>
+</head>
+<body style="background-color: #eee">
+	<div class="container">
+		<div class="row clearfix row-one-margin">
+			<div class="col-md-12 column">
+			<!-- 新增（发表）Anecdote模态框 -->
+				<div class="modal fade" id="model-add" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+								<h4 class="modal-title" id="myModalLabel">
+									发表新帖
+								</h4>
+							</div>
+							<div class="modal-body">
+								<form class="form-horizontal" role="form">
+									<div class="form-group">
+										<div class="col-sm-12">
+											<label for="anec-person">主人公</label>
+											<input type="text" class="form-control input-lg" id="anec-person" placeholder="轶事主人公" />
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="col-sm-12">
+											<label for="anec-title">标题</label>
+											<input type="text" class="form-control input-lg" id="anec-title" placeholder="轶事标题" />
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="col-sm-12">
+											<label for="anec-content">内容</label>
+											<textarea class="form-control text-pre" id="anec-content" rows="8" placeholder="轶事内容……"></textarea>
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="col-sm-12">
+											<label for="anec_file">相关图片（支持jpg、png等格式，大小5MB以内）</label>
+											<input type="file" class="form-control input-lg" id="anec_file" />
+										</div>
+									</div>
+								</form>
+							</div>
+							<div class="modal-footer">
+								<span id="msg" style="color: #f00;margin-right: 80px;"></span>
+								<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button> 
+								<button type="button" class="btn btn-primary" onclick="anecAdd()">立刻发表</button>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- 新增（发表）Anecdote模态框end -->
+
+				<!-- 头部导航栏 -->
+				<nav class="navbar navbar-default navbar-fixed-top" role="navigation"  style="background-color: #fff">
+					<div class="navbar-header" id="navbar-header">
+						<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse-1">
+							<span class="sr-only">Toggle navigation</span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+						</button>
+						<a class="navbar-brand" href="#" th:href="@{/anec/list/1/client}">
+							<img class="img-navbar" src="../static/imgs/logo.png" th:src="@{/static/imgs/logo.png}" alt="100x60">
+						</a>
+					</div>
+
+					<div class="collapse navbar-collapse" id="navbar-collapse-1">
+						<ul class="nav navbar-nav">
+							<li>
+								<a href="#" th:href="@{/anec/list/1/client}"><span class="glyphicon glyphicon-home"></span> 首页</a>
+							</li>
+							<li>
+								<a onclick="beforeAnecAdd()" href="#model-add" data-toggle="modal">
+									<span class="glyphicon glyphicon-edit"></span> 发表
+								</a>
+							</li>
+						</ul>
+
+						<form class="navbar-form navbar-left" id="form-search" role="search">
+							<div class="form-group">
+								<input type="text" class="form-control" id="input-search" placeholder="搜索轶事主人公/标题/内容关键字……" />
+								<input type="text" style="display: none">
+							</div>
+							<button type="button" class="btn btn-default" id="btn-search" onclick="anecSearch()">
+								<span class="glyphicon glyphicon-search"></span> 搜索
+							</button>
+						</form>
+
+						<ul class="nav navbar-nav navbar-right" id="navbar-right">
+							<li id="li-log-reg" th:if="${session.ANEC_USER_SESSION} eq null">
+								<a href="log-reg.html" th:href="@{/user/login}">登录/注册</a>
+							</li>
+							<li class="dropdown" id="li-user" th:if="${session.ANEC_USER_SESSION ne null}">
+								<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+									<span class="	glyphicon glyphicon-user"></span>
+									<span th:text="${session.ANEC_USER_SESSION.userName}">用户名</span><strong class="caret"></strong>
+								</a>
+								<ul class="dropdown-menu">
+									<li  id="li-admin" th:if="${session.ANEC_USER_SESSION.userPower} eq 1">
+										<a href="admin.html" th:href="@{/anec/list/1/admin}">
+											<span class="glyphicon glyphicon-cog"></span>&nbsp;&nbsp;后台管理
+										</a>
+									</li>
+									<li>
+										<a href="#" th:href="@{/user/logout}">
+											<span class="glyphicon glyphicon-off"></span>&nbsp;&nbsp;退出
+										</a>
+									</li>
+								</ul>
+							</li>
+						</ul>
+					</div>
+				</nav>
+				<!-- 头部导航栏end -->
+			</div>
+		</div>
+
+	<!-- 帖子标题及内容 -->
+	<div class="row clearfix">
+		<div class="col-md-12 column column-content">
+			<h2 th:text="${anecdote.anecTitle}">
+				帖子标题帖子标题帖子标题
+			</h2><hr>
+			<p class="text-muted">
+				<span th:text="${anecdote.anecCreateName}">用户名</span>&nbsp;&nbsp;|&nbsp;&nbsp;
+				<span th:text="${anecdote.anecTimeStr}">2020-10-01 08:30</span>
+			</p><br>
+			<p style="font-size: 18px;white-space: pre-wrap;" th:text="${anecdote.anecContent}">
+				帖子内容……帖子内容……帖子内容……帖子内容……帖子内容……帖子内容……帖子内容……帖子内容……帖子内容……帖子内容……帖子内容……帖子内容……
+				帖子内容……帖子内容……帖子内容……帖子内容……帖子内容……帖子内容……帖子内容……帖子内容……帖子内容……帖子内容……帖子内容……帖子内容……
+				帖子内容……帖子内容……帖子内容……帖子内容……帖子内容……帖子内容……帖子内容……帖子内容……帖子内容……帖子内容……帖子内容……帖子内容……
+				帖子内容……帖子内容……帖子内容……帖子内容……帖子内容……帖子内容……帖子内容……帖子内容……帖子内容……帖子内容……帖子内容……帖子内容……
+				帖子内容……帖子内容……帖子内容……帖子内容……帖子内容……帖子内容……帖子内容……帖子内容……帖子内容……帖子内容……帖子内容……帖子内容……
+				帖子内容……帖子内容……帖子内容……帖子内容……帖子内容……帖子内容……帖子内容……帖子内容……帖子内容……帖子内容……帖子内容……帖子内容……
+				帖子内容……帖子内容……帖子内容……帖子内容……帖子内容……帖子内容……帖子内容……帖子内容……帖子内容……帖子内容……帖子内容……帖子内容……
+				帖子内容……帖子内容……帖子内容……帖子内容……帖子内容……帖子内容……帖子内容……帖子内容……帖子内容……帖子内容……帖子内容……帖子内容……
+				帖子内容……帖子内容……帖子内容……帖子内容……帖子内容……帖子内容……帖子内容……帖子内容……帖子内容……帖子内容……帖子内容……帖子内容……
+				帖子内容……帖子内容……帖子内容……帖子内容……帖子内容……帖子内容……帖子内容……帖子内容……帖子内容。
+			</p><br><br>
+			<img class="img-anec-details center-block" alt="content-img" src="../static/imgs/anec_imgs/01.jpg"
+					 th:src="@{/{path}(path=${anecdote.anecImgPath})}"/><br><hr>
+		</div>
+	</div>
+	<!-- 帖子标题及内容end -->
+
+	<!-- 发表评论 -->
+	<div class="row clearfix">
+		<div class="col-md-12 column column-content">
+			<form class="form-horizontal" id="form-comment" role="form" style="margin-right: 60px;">
+				<div class="form-group">
+					 <label for="anec-comment" class="col-sm-2 control-label" style="font-size: 18px;">评 论</label>
+					<div class="col-sm-10">
+						<input type="hidden" name="anecId" th:value="${anecdote.anecId}">
+						<input type="hidden" name="praise" value="0">
+						<textarea class="form-control text-pre" id="anec-comment" name="content" rows="3" placeholder="我有话说……"></textarea>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-8">
+						<span id="msg-comm" class="pull-right"></span>
+					</div>
+					<div class="col-sm-4">
+						<button type="button" class="btn btn-primary pull-right" onclick="commSave()">发 表</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+	<!-- 发表评论end -->
+
+	<!-- 评论列表 -->
+	<div class="row clearfix">
+		<div class="col-md-12 column column-content">
+			<h4 class="text-center">最新评论</h4><br><br>
+			<div th:each="comment:${anecdote.comments}">
+				<p>
+					<span class="text-left">
+						<span th:text="${comment.userName}">用户名</span>&nbsp;&nbsp;|&nbsp;&nbsp;
+						<span th:text="${comment.timeStr}">2020-10-01 08:50</span>
+					</span>
+					<span class="pull-right">
+						<label class="btn-praise" style="cursor: pointer" th:id="'btn-'+${comment.id}" th:onclick="praiseChange([[${comment.id}]])">
+							<span class="glyphicon glyphicon-thumbs-up"></span>
+							<span th:id="'praise-'+${comment.id}" th:text="${comment.praise}">0</span>
+						</label>
+					</span>
+				</p>
+				<p class="text-left" th:text="${comment.content}" style="white-space: pre-wrap;">
+					评论内容 评论内容 评论内容 评论内容 评论内容 评论内容 评论内容 评论内容 评论内容 评论内容。
+				</p>
+				<hr>
+			</div>
+		</div>
+	</div>
+	<!-- 评论列表end -->
+
+		<!-- 页脚部分 -->
+		<div class="row clearfix" style="background-color: #fff;padding:15px;margin-top: 20px;">
+			<div class="col-md-12 column">
+				<p style="font-size: 13px;">
+					友情链接 <a href="https://www.51zxw.net/default.aspx" target="_blank">我要自学网</a> |
+					<a href="https://www.w3cschool.cn/" target="_blank">W3CShool</a> |
+					<a href="https://www.runoob.com/" target="_blank">菜鸟教程</a>
+				</p><br><br>
+				<p style="font-size: 12px; width: 260px; margin:0 auto;">
+					Copyright ©2020 <a href="#" th:href="@{/anec/list/1/client}">Anecdote</a> All Rights Reserved.
+				</p>
+			</div>
+		</div>
+		<!-- 页脚部分end -->
+	</div>
+
+	<!-- 隐藏表单，用于请求跳转 -->
+	<form th:action="@{/user/login}" id="form_login"></form>
+	<form action="" id="form-to-search"></form>
+
+	<script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+	<script src="https://cdn.staticfile.org/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+	<script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+	<script th:inline="javascript">
+		$(document).ready(function () {
+			btnSet();
+			// 评论输入框获得焦点，检查是否登录
+			$("#anec-comment").focus(function () {
+				ifLogin();
+				$("#msg-comm").text("");
+			});
+			// 搜索框回车提交搜索
+			$("#input-search").keydown(function (event) {
+				if (event.which===13){
+					anecSearch();
+				}
+			});
+		});
+
+		// 点赞按钮样式及响应
+		btnSet=function() {
+			$(".btn-praise").each(function () {
+				var id=$(this).attr("id").substring(4);	// 截取"btn-"后面的comment.id
+				var cookieId='anec_praise_'+id;
+				if ($.cookie(cookieId)!==undefined){
+					$(this).css("color","#2BB3D5");
+					$(this).attr("onclick","javascript:void(0)");
+				}
+			});
+		};
+
+		// 发表Anecdote之前检查登录、清空发表模态框输入内容和提示信息
+		beforeAnecAdd=function() {
+			ifLogin();
+			$("#anec-person").val("");
+			$("#anec-title").val("");
+			$("#anec-content").val("");
+			$("#anec_file").val("");
+			$("#msg").text("");
+		};
+
+		// 未登录跳转到登录页面
+		ifLogin=function () {
+			if ([[${session.ANEC_USER_SESSION}]]===null) {
+				$("#form_login").submit();
+			}
+		};
+
+		// 发表评论
+		commSave=function() {
+			var msg = $("#msg-comm");
+			if ($("#anec-comment").val() === '') {
+				msg.css('color', '#f00');
+				msg.text('评论内容不能为空！');
+			} else {
+				$.post(/*[[@{/client/comm/save}]]*/, $("#form-comment").serialize(), function (data) {
+					if (data === 'ok') {
+						msg.css('color', '#0f0');
+						msg.text('评论成功！');
+						setTimeout(function () {
+							window.location.reload();
+						}, 2000)
+					} else {
+						msg.css('color', '#f00');
+						msg.text('评论失败！');
+					}
+				});
+			}
+		};
+		// 发表评论end
+
+		// 点赞数量改动
+		praiseChange=function(commentId) {
+			var cookieId="anec_praise_"+commentId;
+			if ($.cookie(cookieId)===undefined){
+				var basePath=/*[[@{/comm/praInc/}]]*/;
+				$.get(basePath+commentId,function (data) {
+					if (data==='ok'){
+						$.cookie("anec_praise_"+commentId,"done",{expires: 7});
+						var praiseNum=$("#praise-"+commentId);	// 等效于(不需要#) $(eval("praise-"+commentId));
+						var btnPraise=$("#btn-"+commentId);
+						praiseNum.text(parseInt(praiseNum.text())+1);
+						btnPraise.css("color","#2BB3D5");
+						btnPraise.attr("onclick","javascript:void(0)");
+					}
+				});
+			}
+		};
+		// 点赞数量改动end
+
+		// 帖子发表
+		anecAdd=function() {
+			var anecPerson=$("#anec-person").val();
+			var anecTitle=$("#anec-title").val();
+			var anecContent=$("#anec-content").val();
+			if (anecPerson==='' || anecTitle==='' || anecContent===''){
+				$("#msg").text('主人公、标题、内容均不能为空！');
+			}else {
+				$("#msg").text('');
+				var formData = new FormData();
+				var anecdote = JSON.stringify({
+					"anecPerson": anecPerson,
+					"anecTitle": anecTitle,
+					"anecContent": anecContent
+				});
+				var file = $("#anec_file")[0].files[0];
+				if (file){
+					formData.append("anecdote", new Blob([anecdote], {type: "application/json"}));
+					formData.append("file", file);
+					$.ajax({
+						type: "post",
+						url: /*[[@{/client/anec/add}]]*/,
+						contentType: false,	// 忽略contentType
+						processData: false, // 取消序列化（formData本身就是序列化的）
+						data: formData,
+						success: function (data) {
+							if (data === "ok") {
+								alert('发表成功！');
+								window.location.reload();
+							} else {
+								alert('发表失败，请选择jpg、jpeg或png格式图片，大小控制在5MB以内！');
+								window.location.reload();
+							}
+						}
+					});
+				}else {
+					alert("请选择文件！");
+				}
+			}
+		};
+		// 帖子发表end
+
+		// 根据关键字搜索
+		anecSearch=function() {
+			var keyword=$("#input-search").val();
+			if (keyword===''){
+				alert('搜索关键字不能为空！');
+			}else {
+				var formSearch=$("#form-to-search");
+				var basePath=/*[[@{/anec/list/1/client/}]]*/;
+				formSearch.attr("action",basePath+keyword);
+				formSearch.submit();
+			}
+		};
+		// 根据关键字搜索end
+	</script>
+</body>
+</html>

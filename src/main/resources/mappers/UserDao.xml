@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.springboot.anecdote.dao.UserDao">
+    <resultMap id="BaseResultMap" type="com.springboot.anecdote.entity.User">
+        <result property="userId" column="user_id"/>
+        <result property="userName" column="user_name"/>
+        <result property="userPwd" column="user_pwd"/>
+        <result property="userPower" column="user_power"/>
+        <result property="userEmail" column="user_email"/>
+    </resultMap>
+
+    <!-- 查找用户完整信息时不包含密码 -->
+    <sql id="userInfo">
+        user_id,user_name,user_power,user_email
+    </sql>
+
+    <!-- 用户注册（插入新用户） -->
+    <insert id="userRegister" parameterType="User">
+        insert into user(user_name,user_pwd,user_email) values(#{userName},#{userPwd},#{userEmail})
+    </insert>
+
+    <!-- 用户登录（根据用户名\邮箱、密码查找用户） -->
+    <select id="userLogin" parameterType="String" resultMap="BaseResultMap">
+        select <include refid="userInfo"/>
+        from user where user_name=#{account} or user_email=#{account} and user_pwd=#{pwd}
+    </select>
+
+    <!-- 根据用户名修改用户权限 -->
+    <update id="userPowerModify" parameterType="User">
+        update user set user_power=#{userPower} where user_name=#{userName}
+    </update>
+
+    <!-- 查找用户名集合 -->
+    <select id="findUserNames" resultType="String">
+        select user_name from user
+    </select>
+
+    <!-- 获取邮箱地址集合 -->
+    <select id="findEmails" resultType="String">
+        select user_email from user
+    </select>
+
+    <!-- 根据账号获取用户信息-->
+    <select id="getUserByAccount" parameterType="String" resultMap="BaseResultMap">
+        select <include refid="userInfo"/>
+        from user where user_name=#{account} or user_email=#{account}
+    </select>
+    <!-- 根据用户id查找用户名 -->
+    <select id="findUserNameById" parameterType="Integer" resultType="String">
+        select user_name from user where user_id=#{id}
+    </select>
+</mapper>

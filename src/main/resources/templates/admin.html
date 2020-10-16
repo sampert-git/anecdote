@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="zh-cn" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>后台管理</title>
+	<link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">  
+	<link rel="shortcut icon" href="../static/imgs/favicon.ico" th:href="@{/static/imgs/favicon.ico}">
+	<style>
+		#navbar-header {margin-left: 10%;}
+		#navbar-right {margin-right: 11%;}
+		#form-search {margin-left: 9%;}
+		#input-search {width: 280px;}
+		.img-navbar {
+			width: 100px;
+			position: relative;
+			bottom: 18px;
+		}
+		.row-one-margin {
+			margin-top: 50px;
+			margin-bottom: 15px;
+		}
+		.text-pre {white-space: pre-wrap;}
+	</style>
+</head>
+<body style="background-color: #eee">
+	<div class="container">
+		<div class="row clearfix row-one-margin">
+			<div class="col-md-12 column">
+			<!-- 新增（发表）Anecdote模态框 -->
+				<div class="modal fade" id="model-add" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+								<h4 class="modal-title" id="myModalLabel">
+									发表新帖
+								</h4>
+							</div>
+							<div class="modal-body">
+								<form class="form-horizontal" role="form">
+									<div class="form-group">
+										<div class="col-sm-12">
+											<label for="anec-person">主人公</label>
+											<input type="text" class="form-control input-lg" id="anec-person" placeholder="轶事主人公" />
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="col-sm-12">
+											<label for="anec-title">标题</label>
+											<input type="text" class="form-control input-lg" id="anec-title" placeholder="轶事标题" />
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="col-sm-12">
+											<label for="anec-content">内容</label>
+											<textarea class="form-control text-pre" id="anec-content" rows="8" placeholder="轶事内容……"></textarea>
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="col-sm-12">
+											<label for="anec_file">相关图片（支持jpg、png等格式，大小5MB以内）</label>
+											<input type="file" class="form-control input-lg" id="anec_file"/>
+										</div>
+									</div>
+								</form>
+							</div>
+							<div class="modal-footer">
+								<span id="msg" style="color: #f00;margin-right: 80px;"></span>
+								<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+								<button type="button" class="btn btn-primary" onclick="anecAdd()">立刻发表</button>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- 新增（发表）Anecdote模态框end -->
+
+				<!-- 头部导航栏 -->
+				<nav class="navbar navbar-default navbar-fixed-top" role="navigation"  style="background-color: #fff">
+					<div class="navbar-header" id="navbar-header">
+						<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse-1">
+							<span class="sr-only">Toggle navigation</span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+						</button>
+						<a class="navbar-brand" href="#" th:href="@{/anec/list/1/client}">
+							<img class="img-navbar" src="../static/imgs/logo.png" th:src="@{/static/imgs/logo.png}" alt="100x60">
+						</a>
+					</div>
+
+					<div class="collapse navbar-collapse" id="navbar-collapse-1">
+						<ul class="nav navbar-nav">
+							<li>
+								<a href="#" th:href="@{/anec/list/1/client}"><span class="glyphicon glyphicon-home"></span> 首页</a>
+							</li>
+							<li>
+								<a onclick="beforeAnecAdd()" href="#model-add" data-toggle="modal">
+									<span class="glyphicon glyphicon-edit"></span> 发表
+								</a>
+							</li>
+						</ul>
+
+						<form class="navbar-form navbar-left" id="form-search" role="search">
+							<div class="form-group">
+								<input type="text" class="form-control" id="input-search" placeholder="搜索轶事主人公/标题/内容关键字……" />
+								<input type="text" style="display: none">
+							</div>
+							<button type="button" class="btn btn-default" id="btn-search" onclick="anecSearch()">
+								<span class="glyphicon glyphicon-search"></span> 搜索
+							</button>
+						</form>
+
+						<ul class="nav navbar-nav navbar-right" id="navbar-right">
+							<li id="li-log-reg" th:if="${session.ANEC_USER_SESSION} eq null">
+								<a href="log-reg.html" th:href="@{/user/login}">登录/注册</a>
+							</li>
+							<li class="dropdown" id="li-user" th:if="${session.ANEC_USER_SESSION ne null}">
+								<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+									<span class="	glyphicon glyphicon-user"></span>
+									<span th:text="${session.ANEC_USER_SESSION.userName}">用户名</span><strong class="caret"></strong>
+								</a>
+								<ul class="dropdown-menu">
+									<li  id="li-admin" th:if="${session.ANEC_USER_SESSION.userPower} eq 1">
+										<a href="admin.html" th:href="@{/anec/list/1/admin}">
+											<span class="glyphicon glyphicon-cog"></span>&nbsp;&nbsp;后台管理
+										</a>
+									</li>
+									<li>
+										<a href="#" th:href="@{/user/logout}">
+											<span class="glyphicon glyphicon-off"></span>&nbsp;&nbsp;退出
+										</a>
+									</li>
+								</ul>
+							</li>
+						</ul>
+					</div>
+				</nav>
+				<!-- 头部导航栏end -->
+			</div>
+		</div>
+
+		<!-- 后台管理数据列表 -->
+		<div class="row clearfix" style="background-color: #fff;padding: 20px 25px;">
+			<div class="col-md-12 column">
+				<div class="row clearfix">
+					<div class="col-md-12 column">
+
+						<!-- 帖子修改模态框 -->
+						<div class="modal fade" id="modal-edit" role="dialog" aria-labelledby="myModalLabel-edit" aria-hidden="true">
+							<div class="modal-dialog">
+								<div class="modal-content">
+									<div class="modal-header">
+										<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+										<h4 class="modal-title" id="myModalLabel-edit">
+											帖子修改
+										</h4>
+									</div>
+									<div class="modal-body">
+										<form class="form-horizontal" role="form" id="form-edit">
+											<input type="hidden" id="anec-id-edit" name="anecId">
+											<div class="form-group">
+												<div class="col-sm-12">
+													<label for="anec-person-edit">主人公</label>
+													<input type="text" class="form-control input-lg" id="anec-person-edit" name="anecPerson"
+																 placeholder="轶事主人公" />
+												</div>
+											</div>
+											<div class="form-group">
+												<div class="col-sm-12">
+													<label for="anec-title-edit">标题</label>
+													<input type="text" class="form-control input-lg" id="anec-title-edit" name="anecTitle"
+																 placeholder="轶事标题" />
+												</div>
+											</div>
+											<div class="form-group">
+												<div class="col-sm-12">
+													<label for="anec-content-edit">内容</label>
+													<textarea class="form-control text-pre" id="anec-content-edit" rows="8" name="anecContent"
+																		placeholder="轶事内容……"></textarea>
+												</div>
+											</div>
+										</form>
+									</div>
+									<div class="modal-footer">
+										<span id="msg-edit" style="color: #f00;margin-right: 80px;"></span>
+										<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+										<button type="button" class="btn btn-primary" th:onclick="editUpload([[${pageInfo.pageNum}]])">确认修改</button>
+									</div>
+								</div>
+							</div>
+						</div>
+						<!-- 帖子修改模态框end -->
+
+					</div>
+				</div>
+				<p style="font-size: 28px;width: 450px;margin: 20px auto;padding: 20px 30px;background-color: #fff;" th:if="${pageInfo.pages==0}">
+					抱歉~~~ 暂未找到指定结果！
+				</p>
+				<table class="table table-striped table-hover table-bordered table-condensed">
+					<thead>
+						<tr>
+							<th>编号</th>
+							<th>主人公</th>
+							<th>标题</th>
+							<th>发布人</th>
+							<th>发布时间</th>
+							<th>操作</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="anec:${pageInfo.list}">
+							<td th:text="${anec.anecId}">1</td>
+							<td th:text="${anec.anecPerson}">刘备</td>
+							<td th:text="${anec.anecTitle}">三顾茅庐三顾茅庐三顾茅庐</td>
+							<td th:text="${anec.anecCreateName}">张三</td>
+							<td th:text="${anec.anecTimeStr}">2020-10-01 08:00</td>
+							<td>
+								<div class="pull-right">
+									<a href="#modal-edit" role="button" class="btn btn-primary" data-toggle="modal"
+										 th:onclick="anecEdit([[${anec.anecId}]])">编辑</a>
+									<a role="button" class="btn btn-danger"
+										 th:onclick="anecDelete([[${anec.anecId}]],[[${anec.anecCreateId}]])">删除</a>
+								</div>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+
+				<!-- 分页 -->
+				<div class="pull-right" style="background-color: #fff;margin-bottom: 20px;" th:if="${pageInfo.pages>0}">
+					<div style="margin-right:60px;padding-left: 65px;padding-top: 20px;font-weight: bold;font-size: 15px;">
+						&nbsp;&nbsp;&nbsp;&nbsp;第 <span th:text="${pageInfo.pageNum}">1</span> /
+						<span th:text="${pageInfo.pages}">1</span> 页，
+						共 <span th:text="${pageInfo.total}">1</span> 条记录 <br>
+						<ul class="pagination">
+							<li>
+								<a href="#" th:href="@{/anec/list/1/admin/{keyword}(keyword=${keyword})}">首页</a>
+							</li>
+							<li>
+								<a href="#" th:href="@{/anec/list/{pageNum}/admin/{keyword}
+								(keyword=${keyword},pageNum=${pageInfo.hasPreviousPage}?${pageInfo.prePage}:1)}">上一页</a>
+							</li>
+							<li>
+								<a href="#" th:href="@{/anec/list/{pageNum}/admin/{keyword}
+								(keyword=${keyword},pageNum=${pageInfo.hasNextPage}?${pageInfo.nextPage}:${pageInfo.pages})}">下一页</a>
+							</li>
+							<li>
+								<a href="#" th:href="@{/anec/list/{pageNum}/admin/{keyword}
+								(keyword=${keyword},pageNum=${pageInfo.pages})}">尾页</a>
+							</li>
+						</ul>
+					</div>
+				</div>
+				<!-- 分页end -->
+			</div>
+		</div>
+		<!-- 后台管理数据列表end -->
+
+		<!-- 页脚部分 -->
+		<div class="row clearfix" style="background-color: #fff;padding:15px;margin-top: 20px;">
+			<div class="col-md-12 column">
+				<!-- <h2>
+					Heading
+				</h2> -->
+				<p style="font-size: 13px;">
+					友情链接 <a href="https://www.51zxw.net/default.aspx" target="_blank">我要自学网</a> |
+					<a href="https://www.w3cschool.cn/" target="_blank">W3CShool</a> |
+					<a href="https://www.runoob.com/" target="_blank">菜鸟教程</a>
+				</p><br><br>
+				<p style="font-size: 12px; width: 260px; margin:0 auto;">
+					Copyright ©2020 <a href="#" th:href="@{/anec/list/1/client}">Anecdote</a> All Rights Reserved.
+				</p>
+			</div>
+		</div>
+		<!-- 页脚部分end -->
+
+	</div>
+
+	<!-- 隐藏表单，用于请求跳转 -->
+	<form th:action="@{/user/login}" id="form_login"></form>
+	<form action="" id="form-to-search"></form>
+
+	<script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+	<script src="https://cdn.staticfile.org/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+	<script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+	<script th:inline="javascript">
+		// 发表Anecdote之前检查登录、清空发表模态框输入值和提示信息
+		beforeAnecAdd=function () {
+			ifLogin();
+			$("#anec-person").val("");
+			$("#anec-title").val("");
+			$("#anec-content").val("");
+			$("#anec_file").val("");
+			$("#msg").text("");
+		};
+
+		// 未登录跳转到登录页面
+		function ifLogin() {
+			if ([[${session.ANEC_USER_SESSION}]]===null) {
+				$("#form_login").submit();
+			}
+		}
+
+		// 帖子发表
+		anecAdd=function () {
+			var anecPerson=$("#anec-person").val();
+			var anecTitle=$("#anec-title").val();
+			var anecContent=$("#anec-content").val();
+			if (anecPerson==='' || anecTitle==='' || anecContent===''){
+				$("#msg").text('主人公、标题、内容均不能为空！');
+			}else {
+				$("#msg").text('');
+				var formData = new FormData();
+				var anecdote = JSON.stringify({
+					"anecPerson": anecPerson,
+					"anecTitle": anecTitle,
+					"anecContent": anecContent
+				});
+				var file = $("#anec_file")[0].files[0];
+				if (file){
+					formData.append("anecdote", new Blob([anecdote], {type: "application/json"}));
+					formData.append("file", file);
+					$.ajax({
+						type: "post",
+						url: /*[[@{/client/anec/add}]]*/,
+						contentType: false,	// 忽略contentType
+						processData: false, // 取消序列化（formData本身就是序列化的）
+						data: formData,
+						success: function (data) {
+							if (data==="ok") {
+								alert("发表成功！");
+								window.location.reload();
+							} else {
+								alert("发表失败，请选择jpg、jpeg或png格式图片，大小控制在5MB以内！");
+								window.location.reload();
+							}
+						}
+					});
+				}else {
+					alert("请选择文件！");
+				}
+			}
+		};
+		// 帖子发表end
+
+		$(document).ready(function () {
+			// 搜索框回车提交搜索
+			$("#input-search").keydown(function (event) {
+				if (event.which===13){
+					anecSearch();
+				}
+			});
+		});
+
+		// 根据关键字搜索
+		anecSearch=function () {
+			var keyword=$("#input-search").val();
+			if (keyword===''){
+				alert('搜索关键字不能为空！');
+			}else {
+				var formSearch=$("#form-to-search");
+				var basePath=/*[[@{/anec/list/1/admin/}]]*/;
+				formSearch.attr("action",basePath+keyword);
+				formSearch.submit();
+			}
+		};
+		// 根据关键字搜索end
+
+		// 通过Ajax将数据写入修改Anecdote模态框
+		anecEdit=function (anecId) {
+			$("#msg-edit").text("");
+			var basePath=/*[[@{/admin/anec/json/id/}]]*/;
+			$.get(basePath+anecId,function (data) {
+				$("#anec-id-edit").val(data.anecId);
+				$("#anec-person-edit").val(data.anecPerson);
+				$("#anec-title-edit").val(data.anecTitle);
+				$("#anec-content-edit").val(data.anecContent);
+			});
+		};
+
+		// 提交更新
+		editUpload=function (pageNum) {
+			var anecPerson=$("#anec-person-edit").val();
+			var anecTitle=$("#anec-title-edit").val();
+			var anecContent=$("#anec-content-edit").val();
+			if (anecPerson==='' || anecTitle==='' || anecContent===''){
+				$("#msg-edit").text('主人公、标题、内容均不能为空！');
+			}else{
+				var basePath=/*[[@{/admin/anec/update/}]]*/;
+				$.post(basePath+pageNum,$("#form-edit").serialize(),function (data) {
+					if (data==="ok"){
+						alert("更新成功！");
+						window.location.reload();
+					}else {
+						alert("更新失败！");
+						window.location.reload();
+					}
+				});
+			}
+		};
+
+		// 删除Anecdote
+		anecDelete=function (anecId,createId) {
+			if (confirm("确定删除该条帖子？")){
+				var basePath=/*[[@{/admin/anec/delete/}]]*/;
+				$.get(basePath+anecId+"/creUserId/"+createId,function (data) {
+					if (data==="ok"){
+						alert("删除成功！");
+						window.location.reload();
+					}else {
+						alert("删除失败！");
+						window.location.reload();
+					}
+				});
+			}
+		};
+	</script>
+</body>
+</html>

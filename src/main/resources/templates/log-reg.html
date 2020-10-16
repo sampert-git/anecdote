@@ -1,0 +1,320 @@
+	<!DOCTYPE html>
+	<html lang="zh-cn" xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>登录/注册</title>
+		<link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">  
+		<link rel="shortcut icon" href="../static/imgs/favicon.ico" th:href="@{/static/imgs/favicon.ico}">
+		<style>
+			.bg {
+				background: url("../static/imgs/bg.jpg") no-repeat fixed center;
+				background-size: cover;
+			}
+			.top-space {
+				margin-top: 9%;
+				margin-bottom: 14%;
+				overflow: hidden;
+			}
+			.tab-form {
+				max-width: 400px;
+				min-width: 280px;
+				height: 400px;
+				padding-left: 10px;
+				padding-right: 10px;
+				background-color: #fff;
+			}
+			.form-container {
+				width: 100%;
+				padding: 20px;
+			}
+			.h-form {
+				width: 80px;
+				margin-bottom: 30px;
+				font-size: 20px;
+			}
+			.btn-full {width: 100%}
+			.my-footer {
+				color: #fff;
+				height: 20px;
+				width: 100%;
+				margin-top: 14%;
+				text-align: center;
+			}
+		</style>
+	</head>
+	<body class="bg">
+		<div class="container">
+		<!-- 主体部分 -->
+			<div class="row clearfix top-space">
+				<div class="col-md-6 column">
+					<img alt="200x120" src="../static/imgs/logo-white.png" th:src="@{/static/imgs/logo-white.png}"
+							 class="img-rounded center-block" />
+				</div>
+				<div class="col-md-6 column">
+					<div class="tabbable tab-form center-block" id="tabs-277383">
+						<ul class="nav nav-tabs">
+							<li class="active">
+								<a href="#login" data-toggle="tab">立即登录</a>
+							</li>
+							<li>
+								<a href="#register" data-toggle="tab">快速注册</a>
+							</li>
+						</ul>
+						<div class="tab-content">
+							<div class="tab-pane active" id="login">
+								<div class="form-container">
+								<form class="form-horizontal" role="form" id="form_login">
+									<h4 class="center-block h-form">登 录</h4>
+									<div class="form-group">
+										<div class="col-sm-12">
+											<input type="text" class="form-control input-lg" id="login_account" name="account" 
+														 placeholder="用户名/邮箱" />
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="col-sm-12">
+											<input type="password" class="form-control input-lg" id="login_pwd" name="pwd" 
+														 placeholder="密码" />
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="col-sm-12">
+											<div class="checkbox">
+												<label>
+													<input type="checkbox" id="login_check" name="check" value="yes"/>7天内自动登录&nbsp;&nbsp;
+													<span id="msg" style="color: #f00;"></span>
+												</label>
+											</div>
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="col-sm-12">
+											<button type="button" class="btn btn-success btn-full input-lg" onclick="login();">登 录</button>
+										</div>
+									</div>
+								</form>
+								</div>
+							</div>
+							<div class="tab-pane" id="register">
+								<div class="form-container">
+								<form class="form-horizontal" role="form" id="form-reg">
+									<h4 class="center-block h-form">注 册</h4>
+									<div class="form-group">
+										<label for="reg-name" class="col-sm-3 control-label">用户名</label>
+										<div class="col-sm-9">
+											<input type="text" class="form-control" id="reg-name" name="userName"
+														 placeholder="设置用户名（光标离开自动检测）" />
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="reg-pwd" class="col-sm-3 control-label">密 码</label>
+										<div class="col-sm-9">
+											<input type="password" class="form-control" id="reg-pwd" name="userPwd" placeholder="设置密码" />
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="reg-email" class="col-sm-3 control-label">邮 箱</label>
+										<div class="col-sm-9">
+											<input type="email" class="form-control" id="reg-email" name="userEmail"
+														 placeholder="邮箱用于接收验证码" />
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="reg-code" class="col-sm-3 control-label">验证码</label>
+										<div class="col-sm-5">
+											<input type="text" class="form-control" id="reg-code" placeholder="请输入验证码" />
+										</div>
+										<div class="col-sm-4">
+											<button type="button" class="btn btn-primary" id="btn-code" onclick="getCode();">获取验证码</button>
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="col-sm-12">
+											<button type="button" class="btn btn-primary btn-full" id="btn-reg"
+															onclick="register();">注 册</button>
+										</div>
+									</div>
+								</form>
+									<span id="msg_reg" style="margin-left: 30px;"></span>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- 主体部分end -->
+
+			<!-- 页脚部分 -->
+			<div class="row clearfix my-footer">
+				<div class="col-md-12 column">
+					<p>Copyright ©2020 Anecdote</p>
+				</div>
+			</div>
+			<!-- 页脚部分end -->
+
+		</div>
+
+		<!-- 隐藏表单，用于登录提交验证成功后重新请求并跳转 -->
+		<form th:action="@{/anec/list/1/client}" id="form_anec_list"></form>
+
+		<script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+		<script src="https://cdn.staticfile.org/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+		<script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+		<script th:inline="javascript">
+			// 登录
+			login = function() {
+				var account=$("#login_account").val();
+				var pwd=$("#login_pwd").val();
+				// 确保账号密码不为空后提交登录信息
+				if(account==="" || pwd===""){
+					$("#msg").text("账号和密码均不能为空！");
+				}else {
+					$("#msg").text("");
+					$.post(/*[[@{/user/login}]]*/,$("#form_login").serialize(),function (data) {
+						if(data==="ok"){
+							// 如果勾选“自动登录”设置Cookie，7天有效；
+							if(document.getElementById("login_check").checked===true){
+								$.cookie("anec_login_account",account,{expires: 7,path: "/"});
+							}
+							$("#form_anec_list").submit();
+						}else {
+							$("#msg").text("账号或密码错误！");
+						}
+					});
+				}
+			};
+			// 登录end
+
+			// 成员变量
+			var nameEna;	// 标记用户名是否可用
+			var msg_reg=$("#msg_reg");
+
+			// 注册
+			register = function() {
+				var reg_nameVal=$("#reg-name").val();
+				var reg_pwdVal=$("#reg-pwd").val();
+				var reg_emailVal=$("#reg-email").val();
+				var reg_codeVal=$("#reg-code").val();
+				if (reg_nameVal==="" || reg_pwdVal==="" || reg_emailVal==="" || reg_codeVal===""){
+					msg_reg.css("color","#f00");
+					msg_reg.text("各项内容均不能为空！");
+				}else{
+					if (nameEna){
+						$("#btn-reg").text("请稍候……");
+						// 验证码比对
+						var basePath=/*[[@{/user/checkCode/}]]*/;
+						$.get(basePath+reg_emailVal+"/"+reg_codeVal,function (data) {
+							if (data==="fail"){
+								msg_reg.css("color","#f00");
+								msg_reg.text("验证码不一致或已过期，请重新获取！");
+								$("#btn-reg").text("注 册");
+							}else {
+								// 提交注册
+								$.post(/*[[@{/user/register}]]*/,$("#form-reg").serialize(),function (data) {
+									if (data==="ok"){
+										$("#btn-reg").text("注册成功！");
+										msg_reg.css("color","#0f0");
+										msg_reg.text("注册成功！3秒后自动跳转至登录选项卡……");
+										setTimeout(function () {
+											location.reload();
+										},3000);
+									}else {
+										msg_reg.css("color","#f00");
+										msg_reg.text("注册失败，请稍候重试！");
+										$("#btn-reg").text("注 册");
+									}
+								})
+							}
+						})
+					}else {
+						msg_reg.css("color","#f00");
+						msg_reg.text("用户名已存在，请更换后尝试！");
+					}
+				}
+			};
+			// 注册end
+
+			$(document).ready(function () {
+				nameEna=false;
+				// 当注册面板“用户名”输入框失去焦点验证用户名是否可用
+				var reg_name=$("#reg-name");
+				reg_name.blur(function () {
+					var userName=reg_name.val();
+					if (userName!==""){
+						var basePath=/*[[@{/user/nameIfEna/}]]*/;
+						$.get(basePath+userName,function (data) {
+							if (data==="fail"){
+								nameEna=false;
+								msg_reg.css("color","#f00");
+								msg_reg.text("用户名已存在，请更换后尝试！");
+							}else {
+								nameEna=true;
+								msg_reg.css("color","#0f0");
+								msg_reg.text("用户名可用！");
+							}
+						});
+					}
+				});
+				// “用户名”输入框获得焦点，提示信息清除
+				reg_name.focus(function () {
+					msg_reg.text("");
+				});
+				// “验证码”输入框获得焦点，提示信息清除
+				$("#reg-code").focus(function () {
+					msg_reg.text("");
+				});
+			});
+
+			// 获取验证码
+			getCode = function() {
+				msg_reg.text("");
+				var email=$("#reg-email").val();
+				var btn_code=$("#btn-code");
+				var timeLenth=60;	// 倒计时时长
+				// 确保邮箱地址不为空且符合格式
+				if (email === "" || email.indexOf("@") === -1) {
+					msg_reg.css("color","#f00");
+					msg_reg.text("请输入正确格式的Email地址！");
+					return false;
+				} else {
+					msg_reg.text("");
+					// 验证邮箱地址是否可用
+					var basePath=/*[[@{/user/emailIfEna/}]]*/;
+					$.get(basePath+email,function (data) {
+						if (data==="fail"){
+							msg_reg.css("color","#f00");
+							msg_reg.text("该邮箱已注册，您可以直接登录或更换邮箱注册！");
+						}else {
+							msg_reg.text("");
+							// 60秒内禁止重复获取验证码
+							var timer = setInterval(function () {
+								btn_code.text("重新获取" + (timeLenth--) + "s");
+								if (timeLenth === -1) {
+									clearInterval(timer);
+									btn_code.text("获取验证码");
+									btn_code.prop("disabled", false);
+								}
+							}, 1000);
+							btn_code.prop("disabled", true);
+							// 提交获取验证码请求
+							var basePath=/*[[@{/user/getCode/}]]*/;
+							$.get(basePath+email,function (data) {
+								if (data==="ok"){
+									msg_reg.css("color","#0f0");
+									msg_reg.text("验证码已发送，请注意查收！");
+								}else{
+									msg_reg.css("color","#f00");
+									msg_reg.text("验证码发送失败，请确认邮件地址是否有效！");
+								}
+							});
+						}
+					});
+				}
+			};
+			// 获取验证码end
+		</script>
+	</body>
+	</html>
