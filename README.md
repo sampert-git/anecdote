@@ -11,7 +11,7 @@
 - 后台管理
 
 ## 项目演示
-[视频演示地址](http:youku.com)
+[视频演示地址](https://v.youku.com/v_show/id_XNDkxMDI4NDMyNA==.html)
 
 ## 技术选型
 
@@ -43,6 +43,6 @@
 
 ## 项目部署
 
-- 安装相关运行环境，克隆本项目导入IDEA编译，编译前根据实际情况修改yml配置文件。
+- 安装相关运行环境，运行`anecdote.sql`文件的中SQL语句初始化MySQL，克隆本项目导入IDEA编译，编译前根据实际情况修改yml配置文件。
 - 其中邮箱配置除了需要在配置文件中修改为自己的邮箱各项参数，  还需要到`UserServiceImpl.getVerifCode()`方法修改邮箱发出地址相关参数。
 - 项目上传图片默认保存位置`E:\anecdote-upload\imgs\anec_imgs`，若要修改到`AnecdoteServiceImpl.addAnecdote()`方法找到相关位置修改即可。
