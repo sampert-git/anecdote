@@ -16,7 +16,7 @@ CREATE TABLE `anecdote`  (
   `anec_content` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '轶事内容',
   `anec_createtime` datetime(0) NOT NULL COMMENT '轶事创建时间',
   `anec_createid` int NOT NULL COMMENT '轶事创建者id',
-  `anec_imgpath` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '轶事图片路径（相对）',
+  `anec_imgpath` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '轶事图片路径（只存文件名）',
   PRIMARY KEY (`anec_id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 58 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 

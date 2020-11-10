@@ -63,11 +63,11 @@ spring:
   mail:
     host: smtp.qq.com
     username: castle_pink@qq.com
-    password: #填写自己的邮箱授权码（一般是16位随机字母）
+    password: qiaouezzhqszheag
     protocol: smtp
     default-encoding: UTF-8
 
-  # 静态资源路径（已通过拦截器配置，此处配置忽略）
+  # 静态资源路径（已通过拦截器配置）
 #  mvc:
 #    static-path-pattern: /static/**,/upload/**
 #  resources:

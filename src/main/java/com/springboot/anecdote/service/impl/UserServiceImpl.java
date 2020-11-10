@@ -41,12 +41,16 @@ public class UserServiceImpl implements UserService {
     public UserServiceImpl(UserDao userDao,JavaMailSender sender) {
         this.userDao = userDao;
         this.sender = sender;
-        map=new ConcurrentHashMap<>();
-        executor=new ScheduledThreadPoolExecutor(2);    // 核心池线程数（根据实际情况调整）
+        map=new ConcurrentHashMap<>(16);    // TODO 不确定存放元素个数先写默认值16，确定后改为：个数/负载因子+1
+        executor=new ScheduledThreadPoolExecutor(2);    // TODO　核心池线程数（根据实际情况调整）
         executor.setRemoveOnCancelPolicy(true); // 计划任务取消即删除
     }
 
-    // 获取验证码
+    /*
+     * @method getVerifCode 发送验证码
+     * @params [mailAddress] 接收验证码的邮箱地址
+     * @return boolean 验证码发送成功返回true
+     */
     @Override
     public boolean getVerifCode(String mailAddress) {
         try {

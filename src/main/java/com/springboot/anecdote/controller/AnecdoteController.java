@@ -17,8 +17,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpSession;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 /**
@@ -34,15 +35,15 @@ public class AnecdoteController {
     private AnecdoteService anecdoteService;
     private CommentService commentService;
     private UserService userService;
-    private SimpleDateFormat dateFormat;
-    private static final Logger logger= LoggerFactory.getLogger(AnecdoteController.class);
+    // private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm"); 非线程安全！
+    private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+    private static final Logger LOGGER = LoggerFactory.getLogger(AnecdoteController.class);
 
     @Autowired
     public AnecdoteController(AnecdoteService anecdoteService,UserService userService,CommentService commentService) {
         this.anecdoteService = anecdoteService;
         this.commentService = commentService;
         this.userService = userService;
-        dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
     }
 
     /*
@@ -59,7 +60,7 @@ public class AnecdoteController {
         if (account != null && session.getAttribute("ANEC_USER_SESSION") == null) {
             User user=userService.getUserByAccount(account);
             session.setAttribute("ANEC_USER_SESSION", user);
-            logger.info("用户"+user.getUserName()+"(id="+user.getUserId()+")通过cookie登录成功！");
+            LOGGER.info("用户"+user.getUserName()+"(id="+user.getUserId()+")通过cookie登录成功！");
         }
         // 装配分页信息
         PageHelper.startPage(pageNum,12);
@@ -80,9 +81,9 @@ public class AnecdoteController {
         // 装配评论列表
         List<Comment> comments = commentService.findCommsByAnecId(anecdote.getAnecId());
         for (Comment comment:comments){
-            // 装配每条Comment评论人名称
+            // 装配每条Comment评论人名称,格式化日期时间
             comment.setUserName(userService.findUserNameById(comment.getUserId()));
-            comment.setTimeStr(dateFormat.format(comment.getCrateTime()));
+            comment.setTimeStr(comment.getCrateTime().format(formatter));
         }
         anecdote.setComments(comments);
         model.addAttribute("anecdote",anecdote);
@@ -148,7 +149,7 @@ public class AnecdoteController {
     @PostMapping("/client/comm/save")
     @ResponseBody
     public String saveObj(Comment comment,HttpSession session){
-        comment.setCrateTime(new Date());
+        comment.setCrateTime(LocalDateTime.now(ZoneId.of("Asia/Shanghai"))); // 或 .of("GMT+8") 或 .now()默认时区
         User user=(User) session.getAttribute("ANEC_USER_SESSION");
         comment.setUserId(user.getUserId());
         return commentService.saveObj(comment)!=null ? "ok":"fail";

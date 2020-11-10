@@ -1,7 +1,7 @@
 package com.springboot.anecdote.entity;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -18,7 +18,7 @@ public class Anecdote implements Serializable {
     private String anecPerson;      // 主人公
     private String anecTitle;       // 标题
     private String anecContent;     // 内容
-    private Date anecCreateTime;    // 创建时间
+    private LocalDateTime anecCreateTime;    // 创建时间
     private int anecCreateId;       // 创建人id
     private String anecImgPath;     // 图片路径（只存文件名）
     private String anecCreateName;  // 创建人名称
@@ -89,11 +89,11 @@ public class Anecdote implements Serializable {
         this.anecContent = anecContent;
     }
 
-    public Date getAnecCreateTime() {
+    public LocalDateTime getAnecCreateTime() {
         return anecCreateTime;
     }
 
-    public void setAnecCreateTime(Date anecCreateTime) {
+    public void setAnecCreateTime(LocalDateTime anecCreateTime) {
         this.anecCreateTime = anecCreateTime;
     }
 

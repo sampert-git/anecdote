@@ -4,7 +4,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 /**
  * Class Comment 
@@ -21,7 +21,7 @@ public class Comment implements Serializable {
     private String id;          // 唯一标识id
     private Integer userId;     // 评论发表人id
     private String userName;    // 发表人姓名
-    private Date crateTime;     // 发表时间
+    private LocalDateTime crateTime;     // 发表时间
     private Integer anecId;     // 评论所属Anecdote的id
     private String content;     // 评论内容
     private Integer praise;     // 点赞数量
@@ -67,11 +67,11 @@ public class Comment implements Serializable {
         this.userName = userName;
     }
 
-    public Date getCrateTime() {
+    public LocalDateTime getCrateTime() {
         return crateTime;
     }
 
-    public void setCrateTime(Date crateTime) {
+    public void setCrateTime(LocalDateTime crateTime) {
         this.crateTime = crateTime;
     }
 

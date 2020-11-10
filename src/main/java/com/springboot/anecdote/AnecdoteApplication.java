@@ -14,11 +14,11 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableTransactionManagement
 public class AnecdoteApplication {
 
-    private static final Logger logger= LoggerFactory.getLogger(AnecdoteApplication.class);
+    private static final Logger LOGGER= LoggerFactory.getLogger(AnecdoteApplication.class);
 
     public static void main(String[] args) {
         SpringApplication.run(AnecdoteApplication.class, args);
-        logger.info("启动Anecdote应用！");
+        LOGGER.info("启动Anecdote应用！");
     }
 
 }

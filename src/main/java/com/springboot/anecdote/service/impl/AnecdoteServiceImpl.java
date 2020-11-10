@@ -18,7 +18,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -35,13 +35,13 @@ import java.util.UUID;
 public class AnecdoteServiceImpl implements AnecdoteService {
 
     private AnecdoteDao anecdoteDao;
-    private final String pathPrefix = "upload/imgs/anec_imgs/";
-    private SimpleDateFormat dateFormat;
+    private static final String PATH_PREFIX = "upload/imgs/anec_imgs/";
+    // private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd"); 非线程安全！
+    private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     @Autowired
     public AnecdoteServiceImpl(AnecdoteDao anecdoteDao) {
         this.anecdoteDao = anecdoteDao;
-        dateFormat = new SimpleDateFormat("yyyy-MM-dd");
     }
 
     // 查找Anecdotes列表
@@ -50,8 +50,8 @@ public class AnecdoteServiceImpl implements AnecdoteService {
     public List<Anecdote> findListAnecdotes(String keyword,Integer pageNum) {
         List<Anecdote> anecdotes = anecdoteDao.findListAnecdotes(keyword);
         for (Anecdote anecdote : anecdotes) {
-            anecdote.setAnecImgPath(pathPrefix + anecdote.getAnecImgPath());
-            anecdote.setAnecTimeStr(dateFormat.format(anecdote.getAnecCreateTime()));
+            anecdote.setAnecImgPath(PATH_PREFIX + anecdote.getAnecImgPath());
+            anecdote.setAnecTimeStr(anecdote.getAnecCreateTime().format(formatter));
         }
         return anecdotes;
     }
@@ -61,8 +61,8 @@ public class AnecdoteServiceImpl implements AnecdoteService {
     @Override
     public Anecdote findAnecdoteById(Integer id) {
         Anecdote anecdote = anecdoteDao.findAnecdoteById(id);
-        anecdote.setAnecImgPath(pathPrefix + anecdote.getAnecImgPath());
-        anecdote.setAnecTimeStr(dateFormat.format(anecdote.getAnecCreateTime()));
+        anecdote.setAnecImgPath(PATH_PREFIX + anecdote.getAnecImgPath());
+        anecdote.setAnecTimeStr(anecdote.getAnecCreateTime().format(formatter));
         return anecdote;
     }
 
@@ -72,8 +72,8 @@ public class AnecdoteServiceImpl implements AnecdoteService {
     public List<Anecdote> findAnecsByCreUser(Integer createId) {
         List<Anecdote> anecdotes = anecdoteDao.findAnecsByCreUser(createId);
         for (Anecdote anecdote : anecdotes) {
-            anecdote.setAnecImgPath(pathPrefix + anecdote.getAnecImgPath());
-            anecdote.setAnecTimeStr(dateFormat.format(anecdote.getAnecCreateTime()));
+            anecdote.setAnecImgPath(PATH_PREFIX + anecdote.getAnecImgPath());
+            anecdote.setAnecTimeStr(anecdote.getAnecCreateTime().format(formatter));
         }
         return anecdotes;
     }
@@ -93,7 +93,7 @@ public class AnecdoteServiceImpl implements AnecdoteService {
                 }
                 // UUID重命名文件
                 String newName= UUID.randomUUID()+suffix;
-                // 图片上传绝对路径
+                // 图片上传保存路径
                 String path = "E:/anecdote-upload/imgs/anec_imgs";
                 try {
                     Path targetDir= Paths.get(path);
