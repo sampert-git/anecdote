@@ -1,7 +1,7 @@
 # Anecdote名人轶事网
 
 ## 项目简介
-`anecdote`是一个基于Springboot+Mybatis实现的练手项目，功能包括：
+`anecdote`旨在为用户提供了解及分享古今中外各路名人之奇闻轶事的web平台，功能包括：
 
 - 邮箱注册/登录
 - 首页列表展示
