@@ -1,5 +1,5 @@
-# DataSource数据源配置
 spring:
+  # DataSource数据源配置
   datasource:
     url: jdbc:mysql://localhost:3306/anecdote?useSSL=false&serverTimezone=Asia/Shanghai
     username: root
@@ -74,8 +74,7 @@ spring:
 #    static-locations: classpath:/static/,file:E:/anecdote-upload/
   servlet:
     multipart:
-      # 最大上传文件大小
-      max-file-size: 5MB
+      max-file-size: 5MB # 最大上传文件大小(默认1MB)
 
 # MyBatis配置
 mybatis:
@@ -105,3 +104,8 @@ logging:
 #  %logger{50} 表示logger名字最长50个字符，否则按照句点分割。
 #  %msg：日志消息，
 #  %n是换行符
+
+# 上传文件保存位置
+file:
+  location:
+    upload: file:E:/anecdote-upload/

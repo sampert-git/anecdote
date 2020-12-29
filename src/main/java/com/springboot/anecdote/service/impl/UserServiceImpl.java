@@ -34,6 +34,8 @@ public class UserServiceImpl implements UserService {
 
     private UserDao userDao;
     private JavaMailSender sender;
+    @Value("${spring.mail.username}")
+    private String mailFrom;
     private ConcurrentHashMap<String,String> map;   // 存放随机验证码
     private ScheduledThreadPoolExecutor executor;   // 计划任务执行器
 
@@ -46,7 +48,7 @@ public class UserServiceImpl implements UserService {
         executor.setRemoveOnCancelPolicy(true); // 计划任务取消即删除
     }
 
-    /*
+    /**
      * @method getVerifCode 发送验证码
      * @params [mailAddress] 接收验证码的邮箱地址
      * @return boolean 验证码发送成功返回true
@@ -56,7 +58,7 @@ public class UserServiceImpl implements UserService {
         try {
             map.remove(mailAddress);    // 每次获取验证码前确保map中没有旧残留
             SimpleMailMessage message=new SimpleMailMessage();
-            message.setFrom("castle_pink@qq.com");  // 发出地址
+            message.setFrom(mailFrom);  // 发出地址
             message.setTo(mailAddress);             // 接收地址
             message.setSubject("Anecdote验证码");   // 邮件主题
             // 生成随机6位数字验证码

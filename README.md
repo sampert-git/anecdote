@@ -43,6 +43,7 @@
 
 ## 项目部署
 
-- 安装相关运行环境，运行`anecdote.sql`文件的中SQL语句初始化MySQL，克隆本项目导入IDEA编译，编译前根据实际情况修改yml配置文件。
-- 其中邮箱配置除了需要在配置文件中修改为自己的邮箱各项参数，  还需要到`UserServiceImpl.getVerifCode()`方法修改邮箱发出地址相关参数。
-- 项目上传图片默认保存位置`E:\anecdote-upload\imgs\anec_imgs`，若要修改到`AnecdoteServiceImpl.addAnecdote()`方法找到相关位置修改即可。
+- 确保机器已安装MySQL、Redis、MongoDB等数据库服务，并正常运行；
+- 根据实际情况修改yml配置文件参数（邮箱、数据库ip、端口等）；
+- 运行`anecdote.sql`文件的中SQL语句初始化MySQL数据库（Redis、MongoDB不需要事先建库建表）；
+- 克隆本项目导入IDEA编译运行即可。

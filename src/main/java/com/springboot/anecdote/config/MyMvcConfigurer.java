@@ -1,6 +1,7 @@
 package com.springboot.anecdote.config;
 
 import com.springboot.anecdote.interceptor.UserInterceptor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -8,7 +9,7 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
- * Class AppConfig
+ * Class MyMvcConfigurer
  * Description //TODO 应用配置类（实现的WebMvcConfigurer接口有多个可选实现的default方法）
  * Date 2020/9/21 20:41
  * @author Sampert
@@ -17,10 +18,13 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class MyMvcConfigurer implements WebMvcConfigurer {
 
+    @Value("${file.location.upload}")
+    private String fileUploadLocation;
+
     // 添加拦截器
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        InterceptorRegistration registration=registry.addInterceptor(new UserInterceptor());
+        InterceptorRegistration registration = registry.addInterceptor(new UserInterceptor());
         registration.addPathPatterns("/client/**","/admin/**","/anec/list/*/admin","/anec/list/*/admin/*");
     }
 
@@ -28,6 +32,6 @@ public class MyMvcConfigurer implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/static/**").addResourceLocations("classpath:/static/");
-        registry.addResourceHandler("/upload/**").addResourceLocations("file:E:/anecdote-upload/");
+        registry.addResourceHandler("/upload/**").addResourceLocations(fileUploadLocation);
     }
 }
