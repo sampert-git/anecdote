@@ -1,10 +1,17 @@
+# Maven #
 target/
 .mvn
 mvnw
 mvnw.cmd
+
+# IDEA #
 .idea
 *.iws
 *.iml
 *.ipr
 
+# Eclipse #
+.settings/
+.classpath
+.project
 
