@@ -97,7 +97,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public int userRegister(User user) {
         // SHA-256 加密
-        user.setUserPwd(EncryptUtil.getSHA256StrJava(user.getUserPwd()));
+        user.setUserPwd(EncryptUtil.getSHA256Str(user.getUserPwd()));
         return userDao.userRegister(user);
     }
 
@@ -105,7 +105,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User userLogin(String account,String pwd) {
         // SHA-256 加密
-        pwd = EncryptUtil.getSHA256StrJava(pwd);
+        pwd = EncryptUtil.getSHA256Str(pwd);
         return userDao.userLogin(account,pwd);
     }
 

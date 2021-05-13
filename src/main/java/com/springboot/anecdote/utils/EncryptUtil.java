@@ -16,7 +16,7 @@ public class EncryptUtil {
      * @param str 明文
      * @return 加密后的密文
      */
-    public static String getSHA256StrJava(String str) {
+    public static String getSHA256Str(String str) {
         MessageDigest messageDigest;
         String encodeStr = "";
         try {
