@@ -80,9 +80,10 @@ public class AnecdoteController {
         // 装配评论列表
         List<Comment> comments = commentService.findCommsByAnecId(anecdote.getAnecId());
         for (Comment comment:comments){
-            // 装配每条Comment评论人名称,格式化日期时间
+            // 评论人姓名
             comment.setUserName(userService.findUserNameById(comment.getUserId()));
-            comment.setTimeStr(comment.getCrateTime().format(formatter));
+            // 要减去保存评论时增加的8小时
+            comment.setTimeStr(comment.getCrateTime().minusHours(8).format(formatter));
         }
         anecdote.setComments(comments);
         model.addAttribute("anecdote",anecdote);
@@ -114,6 +115,7 @@ public class AnecdoteController {
                               @RequestPart(value = "file",required = false) MultipartFile file){
         User user=(User) session.getAttribute("ANEC_USER_SESSION");
         anecdote.setAnecCreateId(user.getUserId());
+        anecdote.setAnecCreateTime(LocalDateTime.now(ZoneId.of("Asia/Shanghai")));
         int result=anecdoteService.addAnecdote(anecdote,file);
         return result > 0 ? "ok" : "fail";
     }
@@ -147,8 +149,9 @@ public class AnecdoteController {
     // 保存Comment对象
     @PostMapping("/client/comm/save")
     @ResponseBody
-    public String saveObj(Comment comment,HttpSession session){
-        comment.setCrateTime(LocalDateTime.now(ZoneId.of("Asia/Shanghai"))); // 或 .of("GMT+8") 或 .now()默认时区
+    public String saveComment(Comment comment,HttpSession session){
+        // 或 .of("GMT+8") 或 .now()默认时区（MongoDB存储时间字段会转化为UTC，方便查看起见这里加8小时，取出时再减去）
+        comment.setCrateTime(LocalDateTime.now(ZoneId.of("Asia/Shanghai")).plusHours(8));
         User user=(User) session.getAttribute("ANEC_USER_SESSION");
         comment.setUserId(user.getUserId());
         return commentService.saveObj(comment)!=null ? "ok":"fail";

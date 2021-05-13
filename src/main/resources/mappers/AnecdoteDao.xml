@@ -56,7 +56,7 @@
             ,anec_imgpath
         </if>
         )
-        values (#{anecPerson},#{anecTitle},#{anecContent},now(),#{anecCreateId}
+        values (#{anecPerson},#{anecTitle},#{anecContent},#{anecCreateTime},#{anecCreateId}
         <if test="anecImgPath!=null">
             ,#{anecImgPath}
         </if>

@@ -69,7 +69,7 @@ class MyTest{
     @Test
     void testEncrypt() {
         String md5Pwd= DigestUtils.md5DigestAsHex("123456".getBytes());
-        String sha256Pwd = EncryptUtil.getSHA256StrJava("123456");
+        String sha256Pwd = EncryptUtil.getSHA256Str("123456");
         System.out.println("MD5:" + md5Pwd + "  length:" + md5Pwd.length()); // 32位密文
         System.out.println("SHA-256:" + sha256Pwd + "  length:" + sha256Pwd.length()); // 64位密文
     }
