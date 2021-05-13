@@ -13,8 +13,8 @@ import java.security.NoSuchAlgorithmException;
 public class EncryptUtil {
     /**
      * 利用java原生的摘要实现SHA256加密
-     * @param str 加密后的报文
-     * @return
+     * @param str 明文
+     * @return 加密后的密文
      */
     public static String getSHA256StrJava(String str) {
         MessageDigest messageDigest;
@@ -31,11 +31,11 @@ public class EncryptUtil {
     /**
      * 将byte转为16进制
      * @param bytes 待转化byte数组
-     * @return 16进制结果
+     * @return 16进制拼接结果（长度64位）
      */
     private static String byteToHex(byte[] bytes) {
         StringBuilder stringBuffer = new StringBuilder();
-        String temp = null;
+        String temp;
         for (byte aByte : bytes) {
             temp = Integer.toHexString(aByte & 0xFF);
             if (temp.length() == 1) {
