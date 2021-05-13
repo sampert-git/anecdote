@@ -24,7 +24,7 @@
     <!-- 用户登录（根据用户名\邮箱、密码查找用户） -->
     <select id="userLogin" parameterType="String" resultMap="BaseResultMap">
         select <include refid="userInfo"/>
-        from user where user_name=#{account} or user_email=#{account} and user_pwd=#{pwd}
+        from user where (user_name=#{account} or user_email=#{account}) and user_pwd=#{pwd}
     </select>
 
     <!-- 根据用户名修改用户权限 -->

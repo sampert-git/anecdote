@@ -3,6 +3,7 @@ package com.springboot.anecdote.service.impl;
 import com.springboot.anecdote.dao.UserDao;
 import com.springboot.anecdote.entity.User;
 import com.springboot.anecdote.service.UserService;
+import com.springboot.anecdote.utils.EncryptUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheConfig;
@@ -12,7 +13,6 @@ import org.springframework.cache.annotation.Caching;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
-import org.springframework.util.DigestUtils;
 
 import java.util.List;
 import java.util.Random;
@@ -96,16 +96,16 @@ public class UserServiceImpl implements UserService {
     @Caching(evict = {@CacheEvict(key = "'userNameList'"),@CacheEvict(key = "'emailList'")})
     @Override
     public int userRegister(User user) {
-        // MD5加密
-        user.setUserPwd(DigestUtils.md5DigestAsHex(user.getUserPwd().getBytes()));
+        // SHA-256 加密
+        user.setUserPwd(EncryptUtil.getSHA256StrJava(user.getUserPwd()));
         return userDao.userRegister(user);
     }
 
     // 用户登录
     @Override
     public User userLogin(String account,String pwd) {
-        // MD5加密
-        pwd = DigestUtils.md5DigestAsHex(pwd.getBytes());
+        // SHA-256 加密
+        pwd = EncryptUtil.getSHA256StrJava(pwd);
         return userDao.userLogin(account,pwd);
     }
 

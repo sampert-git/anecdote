@@ -1,6 +1,7 @@
 package com.springboot.anecdote;
 
 import com.alibaba.druid.filter.config.ConfigTools;
+import com.springboot.anecdote.utils.EncryptUtil;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,9 +67,11 @@ class MyTest{
     }
 
     @Test
-    void testMd5(){
+    void testEncrypt() {
         String md5Pwd= DigestUtils.md5DigestAsHex("123456".getBytes());
-        System.out.println(md5Pwd); // 32位密文
+        String sha256Pwd = EncryptUtil.getSHA256StrJava("123456");
+        System.out.println("MD5:" + md5Pwd + "  length:" + md5Pwd.length()); // 32位密文
+        System.out.println("SHA-256:" + sha256Pwd + "  length:" + sha256Pwd.length()); // 64位密文
     }
 
     @Test
