@@ -35,7 +35,6 @@ public class AnecdoteController {
     private AnecdoteService anecdoteService;
     private CommentService commentService;
     private UserService userService;
-    // private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm"); 非线程安全！
     private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
     private static final Logger LOGGER = LoggerFactory.getLogger(AnecdoteController.class);
 
