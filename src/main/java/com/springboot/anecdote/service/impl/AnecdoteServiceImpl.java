@@ -4,6 +4,7 @@ import com.springboot.anecdote.dao.AnecdoteDao;
 import com.springboot.anecdote.entity.Anecdote;
 import com.springboot.anecdote.service.AnecdoteService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -35,8 +36,9 @@ import java.util.UUID;
 public class AnecdoteServiceImpl implements AnecdoteService {
 
     private AnecdoteDao anecdoteDao;
-    private static final String PATH_PREFIX = "upload/imgs/anec_imgs/";
-    // private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd"); 非线程安全！
+    private static final String PATH_PREFIX = "upload/";
+    @Value("${file.location.upload}")
+    private String fileUploadLocation;
     private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     @Autowired
@@ -93,8 +95,8 @@ public class AnecdoteServiceImpl implements AnecdoteService {
                 }
                 // UUID重命名文件
                 String newName= UUID.randomUUID()+suffix;
-                // 图片上传保存路径
-                String path = "E:/anecdote-upload/imgs/anec_imgs";
+                // 图片上传保存路径（从 file:E:/anecdote-upload/imgs/anec_imgs/ 第6个字符（下标为5）开始）
+                String path = fileUploadLocation.substring(5);
                 try {
                     Path targetDir= Paths.get(path);
                     if(!Files.exists(targetDir)){

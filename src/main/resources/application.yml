@@ -108,4 +108,4 @@ logging:
 # 上传文件保存位置
 file:
   location:
-    upload: file:E:/anecdote-upload/
+    upload: file:E:/anecdote-upload/imgs/anec_imgs/

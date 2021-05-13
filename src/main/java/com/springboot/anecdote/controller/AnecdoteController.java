@@ -56,7 +56,7 @@ public class AnecdoteController {
                                     @PathVariable("target") String target,
                                     @PathVariable(value = "keyword",required = false) String keyword,
                                     @CookieValue(value = "anec_login_account",required = false) String account){
-        // 如果客户端浏览器存在账户cookie且还未创建session则根据cookie存储的帐户创建一个session及session级别cookie
+        // 如果客户端浏览器存在账户cookie且还未创建session则根据cookie存储的帐户创建一个session
         if (account != null && session.getAttribute("ANEC_USER_SESSION") == null) {
             User user=userService.getUserByAccount(account);
             session.setAttribute("ANEC_USER_SESSION", user);

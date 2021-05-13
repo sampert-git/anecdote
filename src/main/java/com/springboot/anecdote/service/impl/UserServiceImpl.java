@@ -70,7 +70,7 @@ public class UserServiceImpl implements UserService {
             message.setText("【Anecdote 名人轶事】您好，您的验证码为："+ randCode +"（5分钟内有效）！");    // 邮件内容
             sender.send(message);
             map.put(mailAddress,randCode);
-            // 5分钟后移除指定邮件地址对应的验证码（如果此时map中不存在指定kdy不会做任何操作）
+            // 5分钟后移除指定邮件地址对应的验证码（如果此时map中不存在指定key不会做任何操作）
             executor.schedule(() -> map.remove(mailAddress), 5, TimeUnit.MINUTES);
             return true;
         } catch (Exception e) {
@@ -82,7 +82,7 @@ public class UserServiceImpl implements UserService {
     // 验证码比对
     @Override
     public boolean checkVerifCode(String mailAddress,String code) {
-        // 无论是否验证通过，调用一次此方法后即触发邮件地址对应验证码失效
+        // 无论是否验证通过，调用一次此方法后即触发邮件地址对应验证码清除
         String mapCode = map.get(mailAddress);
         if(mapCode!=null && mapCode.equals(code)){
             map.remove(mailAddress);
