@@ -17,7 +17,7 @@
     </sql>
 
     <!-- 用户注册（插入新用户） -->
-    <insert id="userRegister" parameterType="User">
+    <insert id="userRegister" parameterType="com.springboot.anecdote.entity.User">
         insert into user(user_name,user_pwd,user_email) values(#{userName},#{userPwd},#{userEmail})
     </insert>
 
@@ -28,7 +28,7 @@
     </select>
 
     <!-- 根据用户名修改用户权限 -->
-    <update id="userPowerModify" parameterType="User">
+    <update id="userPowerModify" parameterType="com.springboot.anecdote.entity.User">
         update user set user_power=#{userPower} where user_name=#{userName}
     </update>
 
@@ -47,6 +47,7 @@
         select <include refid="userInfo"/>
         from user where user_name=#{account} or user_email=#{account}
     </select>
+
     <!-- 根据用户id查找用户名 -->
     <select id="findUserNameById" parameterType="Integer" resultType="String">
         select user_name from user where user_id=#{id}

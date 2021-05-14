@@ -23,9 +23,10 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 /**
- * Class AnecdoteController 
- * Description //TODO Anecdote控制器类；
+ * Class AnecdoteController
+ * Description Anecdote控制器类；
  * Date 2020/9/12 9:25
+ *
  * @author Sampert
  * @version 1.0
  **/
@@ -39,92 +40,92 @@ public class AnecdoteController {
     private static final Logger LOGGER = LoggerFactory.getLogger(AnecdoteController.class);
 
     @Autowired
-    public AnecdoteController(AnecdoteService anecdoteService,UserService userService,CommentService commentService) {
+    public AnecdoteController(AnecdoteService anecdoteService, UserService userService, CommentService commentService) {
         this.anecdoteService = anecdoteService;
         this.commentService = commentService;
         this.userService = userService;
     }
 
-    /*
+    /**
      * Anecdote（轶事）操作
-     * */
+     **/
 
     // 查找Anecdotes列表（keyword条件可选）
-    @GetMapping(value = {"/anec/list/{pageNum}/{target}/{keyword}","/anec/list/{pageNum}/{target}"})
+    @GetMapping(value = {"/anec/list/{pageNum}/{target}/{keyword}", "/anec/list/{pageNum}/{target}"})
     public String findListAnecdotes(@PathVariable("pageNum") Integer pageNum, Model model, HttpSession session,
                                     @PathVariable("target") String target,
-                                    @PathVariable(value = "keyword",required = false) String keyword,
-                                    @CookieValue(value = "anec_login_account",required = false) String account){
+                                    @PathVariable(value = "keyword", required = false) String keyword,
+                                    @CookieValue(value = "anec_login_account", required = false) String account) {
         // 如果客户端浏览器存在账户cookie且还未创建session则根据cookie存储的帐户创建一个session
         if (account != null && session.getAttribute("ANEC_USER_SESSION") == null) {
-            User user=userService.getUserByAccount(account);
+            User user = userService.getUserByAccount(account);
             session.setAttribute("ANEC_USER_SESSION", user);
-            LOGGER.info("用户"+user.getUserName()+"(id="+user.getUserId()+")通过cookie登录成功！");
+            LOGGER.info("用户" + user.getUserName() + "(id=" + user.getUserId() + ")通过cookie登录成功！");
         }
         // 装配分页信息
-        PageHelper.startPage(pageNum,12);
-        List<Anecdote> anecdotes=anecdoteService.findListAnecdotes(keyword,pageNum);
-        PageInfo<Anecdote> pageInfo=new PageInfo<>(anecdotes);
-        model.addAttribute("pageInfo",pageInfo);
-        if (keyword!=null)
-            model.addAttribute("title","搜索结果");
+        PageHelper.startPage(pageNum, 12);
+        List<Anecdote> anecdotes = anecdoteService.findListAnecdotes(keyword, pageNum);
+        PageInfo<Anecdote> pageInfo = new PageInfo<>(anecdotes);
+        model.addAttribute("pageInfo", pageInfo);
+        if (keyword != null)
+            model.addAttribute("title", "搜索结果");
         else
-            model.addAttribute("title","Anecdote 名人轶事");
+            model.addAttribute("title", "Anecdote 名人轶事");
         return "client".equals(target) ? "anec-list" : "admin";
     }
 
     // 根据id查找Anecdote（返回HTML模板）
     @GetMapping("/anec/id/{id}")
-    public String findAnecdoteById(@PathVariable("id") Integer id, Model model){
-        Anecdote anecdote=anecdoteService.findAnecdoteById(id);
+    public String findAnecdoteById(@PathVariable("id") Integer id, Model model) {
+        Anecdote anecdote = anecdoteService.findAnecdoteById(id);
         // 装配评论列表
         List<Comment> comments = commentService.findCommsByAnecId(anecdote.getAnecId());
-        for (Comment comment:comments){
+        for (Comment comment : comments) {
             // 评论人姓名
             comment.setUserName(userService.findUserNameById(comment.getUserId()));
             // 要减去保存评论时增加的8小时
             comment.setTimeStr(comment.getCrateTime().minusHours(8).format(formatter));
         }
         anecdote.setComments(comments);
-        model.addAttribute("anecdote",anecdote);
+        model.addAttribute("anecdote", anecdote);
         return "anec-details";
     }
 
     // 根据id查找Anecdote（返回json数据）
     @GetMapping("/admin/anec/json/id/{id}")
     @ResponseBody
-    public Anecdote findJsonAnecdoteById(@PathVariable("id") Integer id){
+    public Anecdote findJsonAnecdoteById(@PathVariable("id") Integer id) {
         return anecdoteService.findAnecdoteById(id);
     }
 
     // 根据创建人id查找Anecdotes(需要单独再写一个HTML页面，内容同anec-list.html,仅分页链接属性不同)
     @GetMapping("/client/anec/list/{pageNum}/createId/{createId}")
-    public String findAnecsByCreUser(@PathVariable("pageNum") Integer pageNum,Model model,
-                                     @PathVariable("createId") Integer createId){
-        PageHelper.startPage(pageNum,12);
-        List<Anecdote> anecdotes=anecdoteService.findAnecsByCreUser(createId);
-        PageInfo<Anecdote> pageInfo=new PageInfo<>(anecdotes);
-        model.addAttribute("pageInfo",pageInfo);
+    public String findAnecsByCreUser(@PathVariable("pageNum") Integer pageNum, Model model,
+                                     @PathVariable("createId") Integer createId) {
+        PageHelper.startPage(pageNum, 12);
+        List<Anecdote> anecdotes = anecdoteService.findAnecsByCreUser(createId);
+        PageInfo<Anecdote> pageInfo = new PageInfo<>(anecdotes);
+        model.addAttribute("pageInfo", pageInfo);
         return "anec-list";
     }
 
     // 添加Anecdote（Anecdote需携带信息：anecPerson,anecTitle,anecContent）
     @PostMapping("/client/anec/add")
     @ResponseBody
-    public String addAnecdote(@RequestPart("anecdote") Anecdote anecdote,HttpSession session,
-                              @RequestPart(value = "file",required = false) MultipartFile file){
-        User user=(User) session.getAttribute("ANEC_USER_SESSION");
+    public String addAnecdote(@RequestPart("anecdote") Anecdote anecdote, HttpSession session,
+                              @RequestPart(value = "file", required = false) MultipartFile file) {
+        User user = (User) session.getAttribute("ANEC_USER_SESSION");
         anecdote.setAnecCreateId(user.getUserId());
         anecdote.setAnecCreateTime(LocalDateTime.now(ZoneId.of("Asia/Shanghai")));
-        int result=anecdoteService.addAnecdote(anecdote,file);
+        int result = anecdoteService.addAnecdote(anecdote, file);
         return result > 0 ? "ok" : "fail";
     }
 
     // 更新Anecdote
     @PostMapping("/admin/anec/update/{pageNum}")
     @ResponseBody
-    public String updateAnecdote(Anecdote anecdote,@PathVariable("pageNum") Integer pageNum){
-        int result=anecdoteService.updateAnecdote(anecdote,pageNum);
+    public String updateAnecdote(Anecdote anecdote, @PathVariable("pageNum") Integer pageNum) {
+        int result = anecdoteService.updateAnecdote(anecdote, pageNum);
         return result > 0 ? "ok" : "fail";
     }
 
@@ -132,49 +133,49 @@ public class AnecdoteController {
     @GetMapping("/admin/anec/delete/{id}/creUserId/{creUserId}")
     @ResponseBody
     public String deleteAnecdote(@PathVariable("id") Integer id,
-                                 @PathVariable("creUserId") Integer creUserId){
-        int result=anecdoteService.deleteAnecdote(id,creUserId);
-        if (result>0){
+                                 @PathVariable("creUserId") Integer creUserId) {
+        int result = anecdoteService.deleteAnecdote(id, creUserId);
+        if (result > 0) {
             // 删除被删Anecdote对应Comment列表
             commentService.deleteCommList(id);
             return "ok";
-        }else
+        } else
             return "fail";
     }
 
-    /*
+    /**
      * Comment（评论）操作
-     * */
+     **/
 
     // 保存Comment对象
     @PostMapping("/client/comm/save")
     @ResponseBody
-    public String saveComment(Comment comment,HttpSession session){
+    public String saveComment(Comment comment, HttpSession session) {
         // 或 .of("GMT+8") 或 .now()默认时区（MongoDB存储时间字段会转化为UTC，方便查看起见这里加8小时，取出时再减去）
         comment.setCrateTime(LocalDateTime.now(ZoneId.of("Asia/Shanghai")).plusHours(8));
-        User user=(User) session.getAttribute("ANEC_USER_SESSION");
+        User user = (User) session.getAttribute("ANEC_USER_SESSION");
         comment.setUserId(user.getUserId());
-        return commentService.saveObj(comment)!=null ? "ok":"fail";
+        return commentService.saveObj(comment) != null ? "ok" : "fail";
     }
 
     // 增加Comment点赞数量1次
     @GetMapping("/comm/praInc/{commId}")
     @ResponseBody
-    public String praiseIncre(@PathVariable("commId") String commentId){
+    public String praiseIncre(@PathVariable("commId") String commentId) {
         return commentService.praiseIncre(commentId);
     }
 
     // 减少Comment点赞数量1次
     @GetMapping("/comm/praDec/{commId}")
     @ResponseBody
-    public String praiseDecre(@PathVariable("commId") String commentId){
+    public String praiseDecre(@PathVariable("commId") String commentId) {
         return commentService.praiseDecre(commentId);
     }
 
     // 根据id删除Comment
     @GetMapping("/admin/comm/delete/{commId}")
     @ResponseBody
-    public String deleteComm(@PathVariable("commId") String commId){
+    public String deleteComm(@PathVariable("commId") String commId) {
         return commentService.deleteComm(commId);
     }
 }

@@ -20,5 +20,4 @@ public class AnecdoteApplication {
         SpringApplication.run(AnecdoteApplication.class, args);
         LOGGER.info("启动Anecdote应用！");
     }
-
 }

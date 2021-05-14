@@ -3,14 +3,16 @@ package com.springboot.anecdote.entity;
 import java.io.Serializable;
 
 /**
- * Class User 
- * Description //TODO User(用户)实体类；
+ * Class User
+ * Description User(用户)实体类；
  * Date 2020/9/11 18:03
+ *
  * @author Sampert
  * @version 1.0
  **/
 public class User implements Serializable {
-    private static final long serialVersionUID=1L;
+
+    private static final long serialVersionUID = 1L;
 
     private Integer userId;     // 用户ID；
     private String userName;    // 用户名；

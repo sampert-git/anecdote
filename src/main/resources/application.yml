@@ -1,11 +1,11 @@
 spring:
-  # DataSource数据源配置
+  # DataSource数据源
   datasource:
     url: jdbc:mysql://localhost:3306/anecdote?useSSL=false&serverTimezone=Asia/Shanghai
     username: root
     password: Zng1L01v6YkFkzX2ppi+wiioagheqn+AbT5jbOi+gAole49kUDRm5dPeAt5QK9IY6YwqVY9NYT0VKnUxz8EJkg==
     driver-class-name: com.mysql.cj.jdbc.Driver
-    # Druid连接池配置
+    # Druid连接池
     type: com.alibaba.druid.pool.DruidDataSource
     druid:
       initial-size: 5
@@ -40,7 +40,7 @@ spring:
       publickey: MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAJCrvWUFBmNIDKMI/dCqPpqol2nhPkuqhF6dMZM3xbqnDkdbHV7LJviVmDQOHw3IKP3Y2SXes78u3NVGn+tZi3MCAwEAAQ==
       async-init: true
 
-  # Redis配置
+  # Redis
   redis:
     database: 0
     host: 192.168.0.103
@@ -54,12 +54,12 @@ spring:
         min-idle: 0
     timeout: 2000ms
 
-  # MongoDB配置
+  # MongoDB
   data:
     mongodb:
       uri: mongodb://localhost:27017/anecdote
 
-  # 邮箱配置
+  # 邮箱
   mail:
     host: smtp.qq.com
     username: castle_pink@qq.com
@@ -76,19 +76,19 @@ spring:
     multipart:
       max-file-size: 5MB # 最大上传文件大小(默认1MB)
 
-# MyBatis配置
+# MyBatis
 mybatis:
   type-aliases-package: com.springboot.anecdote.entity
   mapper-locations: classpath:mappers/*.xml
 
-# PageHelper分页插件配置
+# PageHelper分页插件
 pagehelper:
   helper-dialect: mysql
   params: count=countSql
   reasonable: true
   support-methods-arguments: true
 
-# slf4j+logback日志配置
+# slf4j+logback日志
 logging:
   level:
     root: info
@@ -105,7 +105,7 @@ logging:
 #  %msg：日志消息，
 #  %n是换行符
 
-# 上传文件保存位置
+# 上传文件保存
 file:
   location:
     upload: file:E:/anecdote-upload/imgs/anec_imgs/

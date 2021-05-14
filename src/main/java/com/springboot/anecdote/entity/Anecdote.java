@@ -5,14 +5,16 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 /**
- * Class Anecdote 
- * Description //TODO Anecdote(轶事)实体类；
+ * Class Anecdote
+ * Description Anecdote(轶事)实体类；
  * Date 2020/9/11 18:47
+ *
  * @author Sampert
  * @version 1.0
  **/
 public class Anecdote implements Serializable {
-    private static final long serialVersionUID=1L;
+
+    private static final long serialVersionUID = 1L;
 
     private int anecId;             // 轶事id
     private String anecPerson;      // 主人公

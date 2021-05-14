@@ -1,7 +1,7 @@
 package com.springboot.anecdote;
 
 import com.alibaba.druid.filter.config.ConfigTools;
-import com.springboot.anecdote.utils.EncryptUtil;
+import com.springboot.anecdote.util.EncryptUtil;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

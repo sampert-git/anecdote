@@ -7,15 +7,17 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
- * Class Comment 
- * Description //TODO Comment(评论)实体类
+ * Class Comment
+ * Description Comment(评论)实体类
  * Date 2020/9/19 13:35
+ *
  * @author Sampert
  * @version 1.0
  **/
 @Document(collection = "comment")
 public class Comment implements Serializable {
-    private static final long serialVersionUID=1L;
+
+    private static final long serialVersionUID = 1L;
 
     @Id
     private String id;          // 唯一标识id

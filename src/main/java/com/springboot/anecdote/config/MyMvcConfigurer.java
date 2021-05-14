@@ -10,8 +10,9 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
  * Class MyMvcConfigurer
- * Description //TODO 应用配置类（实现的WebMvcConfigurer接口有多个可选实现的default方法）
+ * Description 应用配置类（实现的WebMvcConfigurer接口有多个可选实现的default方法）
  * Date 2020/9/21 20:41
+ *
  * @author Sampert
  * @version 1.0
  */
@@ -25,7 +26,7 @@ public class MyMvcConfigurer implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         InterceptorRegistration registration = registry.addInterceptor(new UserInterceptor());
-        registration.addPathPatterns("/client/**","/admin/**","/anec/list/*/admin","/anec/list/*/admin/*");
+        registration.addPathPatterns("/client/**", "/admin/**", "/anec/list/*/admin", "/anec/list/*/admin/*");
     }
 
     // 配置静态资源访问路径

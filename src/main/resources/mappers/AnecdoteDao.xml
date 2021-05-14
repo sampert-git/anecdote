@@ -50,7 +50,7 @@
     </select>
 
     <!-- 添加Anecdote -->
-    <insert id="addAnecdote" parameterType="Anecdote">
+    <insert id="addAnecdote" parameterType="com.springboot.anecdote.entity.Anecdote">
         insert into anecdote(anec_person,anec_title,anec_content,anec_createtime,anec_createid
         <if test="anecImgPath!=null">
             ,anec_imgpath
@@ -64,7 +64,7 @@
     </insert>
 
     <!-- 更新Anecdote -->
-    <update id="updateAnecdote" parameterType="Anecdote">
+    <update id="updateAnecdote" parameterType="com.springboot.anecdote.entity.Anecdote">
         update anecdote set anec_person=#{anecPerson},
             anec_title=#{anecTitle},
             anec_content=#{anecContent}
