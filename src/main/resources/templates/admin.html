@@ -221,7 +221,7 @@
 									<a href="#modal-edit" role="button" class="btn btn-primary" data-toggle="modal"
 										 th:onclick="anecEdit([[${anec.anecId}]])">编辑</a>
 									<a role="button" class="btn btn-danger"
-										 th:onclick="anecDelete([[${anec.anecId}]],[[${anec.anecCreateId}]])">删除</a>
+										 th:onclick="anecDelete([[${anec.anecId}]],[[${anec.anecCreateId}]],[[${anec.anecImgPath}]])">删除</a>
 								</div>
 							</td>
 						</tr>
@@ -403,10 +403,10 @@
 		};
 
 		// 删除Anecdote
-		anecDelete=function (anecId,createId) {
+		anecDelete=function (anecId,createId,anecImgPath) {
 			if (confirm("确定删除该条帖子？")){
 				var basePath=/*[[@{/admin/anec/delete/}]]*/;
-				$.get(basePath+anecId+"/creUserId/"+createId,function (data) {
+				$.get(basePath+anecId+"/"+createId+"/"+anecImgPath.substring(7),function (data) {
 					if (data==="ok"){
 						alert("删除成功！");
 						window.location.reload();

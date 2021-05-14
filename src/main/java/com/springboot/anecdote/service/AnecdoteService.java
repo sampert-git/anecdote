@@ -23,4 +23,7 @@ public interface AnecdoteService {
 
     // 删除Anecdote
     int deleteAnecdote(Integer id, Integer creUserId);
+
+    // 根据path删除Anecdote对应图片
+    boolean deleteAnecImg(String anecImgPath);
 }

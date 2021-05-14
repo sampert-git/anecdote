@@ -78,11 +78,7 @@ public class CommentServiceImpl implements CommentService {
     // 根据anecId删除评论列表（当该anecId对应Anecdote被删除时调用）
     @Override
     public void deleteCommList(Integer anecId) {
-        List<Comment> comments = this.findCommsByAnecId(anecId);
-        if (comments != null) {
-            for (Comment comment : comments) {
-                mongoTemplate.remove(comment);
-            }
-        }
+        Query query = new Query(Criteria.where("anecId").is(anecId));
+        mongoTemplate.findAllAndRemove(query, Comment.class, "comment");
     }
 }

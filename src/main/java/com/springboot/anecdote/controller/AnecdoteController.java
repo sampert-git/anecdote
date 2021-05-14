@@ -130,14 +130,20 @@ public class AnecdoteController {
     }
 
     // 删除Anecdote
-    @GetMapping("/admin/anec/delete/{id}/creUserId/{creUserId}")
+    @GetMapping("/admin/anec/delete/{anecId}/{creUserId}/{anecImgPath}")
     @ResponseBody
-    public String deleteAnecdote(@PathVariable("id") Integer id,
-                                 @PathVariable("creUserId") Integer creUserId) {
-        int result = anecdoteService.deleteAnecdote(id, creUserId);
+    public String deleteAnecdote(@PathVariable("anecId") Integer anecId,
+                                 @PathVariable("creUserId") Integer creUserId,
+                                 @PathVariable("anecImgPath") String anecImgPath) {
+        int result = anecdoteService.deleteAnecdote(anecId, creUserId);
         if (result > 0) {
-            // 删除被删Anecdote对应Comment列表
-            commentService.deleteCommList(id);
+            // 删除Anecdote对应Comment列表
+            commentService.deleteCommList(anecId);
+            // 删除Anecdote对应图片（anecImgPath 形如 xxx.jpg）
+            if (!anecdoteService.deleteAnecImg(anecImgPath)) {
+                // 图片删除失败的处理……
+                LOGGER.warn("图片删除失败！anecId = " + anecId + " anecImgPath = " + anecImgPath);
+            }
             return "ok";
         } else
             return "fail";

@@ -131,4 +131,22 @@ public class AnecdoteServiceImpl implements AnecdoteService {
     public int deleteAnecdote(Integer id, Integer creUserId) {
         return anecdoteDao.deleteAnecdote(id);
     }
+
+    // 根据path删除Anecdote对应图片
+    @Override
+    public boolean deleteAnecImg(String anecImgPath) {
+        // 去掉“file:”前缀
+        String path = fileUploadLocation.substring(5);
+        try {
+            Path targetDir = Paths.get(path);
+            if (!Files.exists(targetDir)) {
+                Files.createDirectories(targetDir);
+            }
+            Path targetFile = targetDir.resolve(anecImgPath);
+            return Files.deleteIfExists(targetFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }
