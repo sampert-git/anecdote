@@ -103,7 +103,7 @@ public class UserController {
     @PostMapping("/admin/user/modify")
     @ResponseBody
     public String userPowerModify(@RequestParam User user, Model model) {
-        int result = userService.userPowerModify(user);
+        int result = userService.updateUserPower(user);
         if (result > 0) {
             model.addAttribute("modMsg", "修改成功!");
             return "修改成功";
@@ -117,7 +117,7 @@ public class UserController {
     @GetMapping("/user/nameIfEna/{userName}")
     @ResponseBody
     public String ifEnabledUserName(@PathVariable("userName") String userName) {
-        List<String> userNames = userService.findUserNames();
+        List<String> userNames = userService.listUserNames();
         return !userNames.contains(userName) ? "ok" : "fail";
     }
 
@@ -125,7 +125,7 @@ public class UserController {
     @GetMapping("/user/emailIfEna/{email}")
     @ResponseBody
     public String ifEnableEmail(@PathVariable("email") String email) {
-        List<String> emails = userService.findEmails();
+        List<String> emails = userService.listEmails();
         return !emails.contains(email) ? "ok" : "fail";
     }
 }

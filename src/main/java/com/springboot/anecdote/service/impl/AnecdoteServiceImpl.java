@@ -32,12 +32,16 @@ import java.util.UUID;
  * @author Sampert
  * @version 1.0
  **/
-@CacheConfig(cacheNames = "anecdoteCache")
+@CacheConfig(cacheNames = "cacheAnecdote")
 @Service
 public class AnecdoteServiceImpl implements AnecdoteService {
 
     private AnecdoteDao anecdoteDao;
     private static final String PATH_PREFIX = "upload/";
+    private static final String CACHE_ANEC_LIST_NAME = "cacheAnecdoteList";
+    private static final String CACHE_ANEC_LIST_PREFIX = "'anecList_'";
+    private static final String CACHE_ANEC_PREFIX = "'anec_'";
+    private static final String CACHE_ANEC_CRE_PREFIX = "'anecCre_'";
     @Value("${file.location.upload}")
     private String fileUploadLocation;
     private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -48,9 +52,9 @@ public class AnecdoteServiceImpl implements AnecdoteService {
     }
 
     // 查找Anecdotes列表
-    @Cacheable(value = "anecdoteCacheList", key = "'anecList_' + #pageNum", condition = "#keyword == null")
+    @Cacheable(value = CACHE_ANEC_LIST_NAME, key = CACHE_ANEC_LIST_PREFIX + " + #pageNum", condition = "#keyword == null")
     @Override
-    public List<Anecdote> findListAnecdotes(String keyword, Integer pageNum) {
+    public List<Anecdote> listAnecdotes(String keyword, Integer pageNum) {
         List<Anecdote> anecdotes = anecdoteDao.findListAnecdotes(keyword);
         for (Anecdote anecdote : anecdotes) {
             anecdote.setAnecImgPath(PATH_PREFIX + anecdote.getAnecImgPath());
@@ -60,9 +64,9 @@ public class AnecdoteServiceImpl implements AnecdoteService {
     }
 
     // 根据id查找Anecdote
-    @Cacheable(key = "'anec_' + #id")
+    @Cacheable(key = CACHE_ANEC_PREFIX + " + #id")
     @Override
-    public Anecdote findAnecdoteById(Integer id) {
+    public Anecdote getAnecdoteById(Integer id) {
         Anecdote anecdote = anecdoteDao.findAnecdoteById(id);
         anecdote.setAnecImgPath(PATH_PREFIX + anecdote.getAnecImgPath());
         anecdote.setAnecTimeStr(anecdote.getAnecCreateTime().format(formatter));
@@ -70,9 +74,9 @@ public class AnecdoteServiceImpl implements AnecdoteService {
     }
 
     // 根据创建人id查找Anecdotes列表
-    @Cacheable(key = "'anecCre_' + #createId")
+    @Cacheable(key = CACHE_ANEC_CRE_PREFIX + " + #createId")
     @Override
-    public List<Anecdote> findAnecsByCreUser(Integer createId) {
+    public List<Anecdote> listAnecdotesByCreUser(Integer createId) {
         List<Anecdote> anecdotes = anecdoteDao.findAnecsByCreUser(createId);
         for (Anecdote anecdote : anecdotes) {
             anecdote.setAnecImgPath(PATH_PREFIX + anecdote.getAnecImgPath());
@@ -83,9 +87,10 @@ public class AnecdoteServiceImpl implements AnecdoteService {
 
     // 添加Anecdote（事务管理隔离级别isolation和传播行为propagation均为默认值）
     @Transactional(isolation = Isolation.DEFAULT, propagation = Propagation.REQUIRED)
-    @Caching(evict = {@CacheEvict(value = "anecdoteCacheList", allEntries = true), @CacheEvict(key = "'anecCre_' + #anecdote.anecCreateId")})
+    @Caching(evict = {@CacheEvict(value = CACHE_ANEC_LIST_NAME, allEntries = true),
+            @CacheEvict(key = CACHE_ANEC_CRE_PREFIX + " + #anecdote.anecCreateId")})
     @Override
-    public int addAnecdote(Anecdote anecdote, MultipartFile file) {
+    public int saveAnecdote(Anecdote anecdote, MultipartFile file) {
         if (file != null) {
             String originalName = file.getOriginalFilename();
             if (originalName != null) {
@@ -116,8 +121,9 @@ public class AnecdoteServiceImpl implements AnecdoteService {
 
     // 更新Anecdote
     @Transactional
-    @Caching(evict = {@CacheEvict(value = "anecdoteCacheList", key = "'anecList_' + #pageNum"),
-            @CacheEvict(key = "'anecCre_'+#anecdote.anecCreateId"), @CacheEvict(key = "'anec_' + #anecdote.anecId")})
+    @Caching(evict = {@CacheEvict(value = CACHE_ANEC_LIST_NAME, key = CACHE_ANEC_LIST_PREFIX + " + #pageNum"),
+            @CacheEvict(key = CACHE_ANEC_CRE_PREFIX + " + #anecdote.anecCreateId"),
+            @CacheEvict(key = CACHE_ANEC_PREFIX + " + #anecdote.anecId")})
     @Override
     public int updateAnecdote(Anecdote anecdote, Integer pageNum) {
         return anecdoteDao.updateAnecdote(anecdote);
@@ -125,8 +131,8 @@ public class AnecdoteServiceImpl implements AnecdoteService {
 
     // 根据ID删除Anecdote
     @Transactional
-    @Caching(evict = {@CacheEvict(value = "anecdoteCacheList", allEntries = true),
-            @CacheEvict(key = "'anec_' + #id"), @CacheEvict(key = "'anecCre_' + #creUserId")})
+    @Caching(evict = {@CacheEvict(value = CACHE_ANEC_LIST_NAME, allEntries = true),
+            @CacheEvict(key = CACHE_ANEC_PREFIX + " + #id"), @CacheEvict(key = CACHE_ANEC_CRE_PREFIX + " + #creUserId")})
     @Override
     public int deleteAnecdote(Integer id, Integer creUserId) {
         return anecdoteDao.deleteAnecdote(id);

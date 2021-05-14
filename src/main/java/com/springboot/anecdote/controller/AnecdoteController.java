@@ -37,6 +37,7 @@ public class AnecdoteController {
     private CommentService commentService;
     private UserService userService;
     private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+    private static final int PAGE_SIZE = 12;
     private static final Logger LOGGER = LoggerFactory.getLogger(AnecdoteController.class);
 
     @Autowired
@@ -63,8 +64,8 @@ public class AnecdoteController {
             LOGGER.info("用户" + user.getUserName() + "(id=" + user.getUserId() + ")通过cookie登录成功！");
         }
         // 装配分页信息
-        PageHelper.startPage(pageNum, 12);
-        List<Anecdote> anecdotes = anecdoteService.findListAnecdotes(keyword, pageNum);
+        PageHelper.startPage(pageNum, PAGE_SIZE);
+        List<Anecdote> anecdotes = anecdoteService.listAnecdotes(keyword, pageNum);
         PageInfo<Anecdote> pageInfo = new PageInfo<>(anecdotes);
         model.addAttribute("pageInfo", pageInfo);
         if (keyword != null)
@@ -77,12 +78,12 @@ public class AnecdoteController {
     // 根据id查找Anecdote（返回HTML模板）
     @GetMapping("/anec/id/{id}")
     public String findAnecdoteById(@PathVariable("id") Integer id, Model model) {
-        Anecdote anecdote = anecdoteService.findAnecdoteById(id);
+        Anecdote anecdote = anecdoteService.getAnecdoteById(id);
         // 装配评论列表
         List<Comment> comments = commentService.findCommsByAnecId(anecdote.getAnecId());
         for (Comment comment : comments) {
             // 评论人姓名
-            comment.setUserName(userService.findUserNameById(comment.getUserId()));
+            comment.setUserName(userService.getUserNameById(comment.getUserId()));
             // 要减去保存评论时增加的8小时
             comment.setTimeStr(comment.getCrateTime().minusHours(8).format(formatter));
         }
@@ -95,15 +96,15 @@ public class AnecdoteController {
     @GetMapping("/admin/anec/json/id/{id}")
     @ResponseBody
     public Anecdote findJsonAnecdoteById(@PathVariable("id") Integer id) {
-        return anecdoteService.findAnecdoteById(id);
+        return anecdoteService.getAnecdoteById(id);
     }
 
     // 根据创建人id查找Anecdotes(需要单独再写一个HTML页面，内容同anec-list.html,仅分页链接属性不同)
     @GetMapping("/client/anec/list/{pageNum}/createId/{createId}")
     public String findAnecsByCreUser(@PathVariable("pageNum") Integer pageNum, Model model,
                                      @PathVariable("createId") Integer createId) {
-        PageHelper.startPage(pageNum, 12);
-        List<Anecdote> anecdotes = anecdoteService.findAnecsByCreUser(createId);
+        PageHelper.startPage(pageNum, PAGE_SIZE);
+        List<Anecdote> anecdotes = anecdoteService.listAnecdotesByCreUser(createId);
         PageInfo<Anecdote> pageInfo = new PageInfo<>(anecdotes);
         model.addAttribute("pageInfo", pageInfo);
         return "anec-list";
@@ -117,7 +118,7 @@ public class AnecdoteController {
         User user = (User) session.getAttribute("ANEC_USER_SESSION");
         anecdote.setAnecCreateId(user.getUserId());
         anecdote.setAnecCreateTime(LocalDateTime.now(ZoneId.of("Asia/Shanghai")));
-        int result = anecdoteService.addAnecdote(anecdote, file);
+        int result = anecdoteService.saveAnecdote(anecdote, file);
         return result > 0 ? "ok" : "fail";
     }
 

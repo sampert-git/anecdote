@@ -28,12 +28,15 @@ import java.util.concurrent.TimeUnit;
  * @author Sampert
  * @version 1.0
  **/
-@CacheConfig(cacheNames = "userCache")
+@CacheConfig(cacheNames = "cacheUser")
 @Service
 public class UserServiceImpl implements UserService {
 
     private UserDao userDao;
     private JavaMailSender sender;
+    private static final String CACHE_USER_NAME_LIST = "'userNameList'";
+    private static final String CACHE_EMAIL_LIST = "'emailList'";
+    private static final String CACHE_USER_NAME_PREFIX = "'userName_'";
     @Value("${spring.mail.username}")
     private String mailFrom;
     private ConcurrentHashMap<String, String> map;  // 存放随机验证码
@@ -93,7 +96,7 @@ public class UserServiceImpl implements UserService {
     }
 
     // 用户注册
-    @Caching(evict = {@CacheEvict(key = "'userNameList'"), @CacheEvict(key = "'emailList'")})
+    @Caching(evict = {@CacheEvict(key = CACHE_USER_NAME_LIST), @CacheEvict(key = CACHE_EMAIL_LIST)})
     @Override
     public int userRegister(User user) {
         // SHA-256 加密
@@ -111,21 +114,21 @@ public class UserServiceImpl implements UserService {
 
     // 用户权限修改
     @Override
-    public int userPowerModify(User user) {
+    public int updateUserPower(User user) {
         return userDao.userPowerModify(user);
     }
 
     // 获取用户名集合
-    @Cacheable(key = "'userNameList'")
+    @Cacheable(key = CACHE_USER_NAME_LIST)
     @Override
-    public List<String> findUserNames() {
+    public List<String> listUserNames() {
         return userDao.findUserNames();
     }
 
     // 获取邮箱地址集合
-    @Cacheable(key = "'emailList'")
+    @Cacheable(key = CACHE_EMAIL_LIST)
     @Override
-    public List<String> findEmails() {
+    public List<String> listEmails() {
         return userDao.findEmails();
     }
 
@@ -136,9 +139,9 @@ public class UserServiceImpl implements UserService {
     }
 
     // 根据用户id查找用户名
-    @Cacheable(key = "'userName_' + #id")
+    @Cacheable(key = CACHE_USER_NAME_PREFIX + " + #id")
     @Override
-    public String findUserNameById(Integer id) {
+    public String getUserNameById(Integer id) {
         return userDao.findUserNameById(id);
     }
 }

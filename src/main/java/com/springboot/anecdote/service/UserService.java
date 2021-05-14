@@ -12,13 +12,13 @@ public interface UserService {
     int userRegister(User user);
 
     // 用户权限修改
-    int userPowerModify(User user);
+    int updateUserPower(User user);
 
     // 获取用户名集合
-    List<String> findUserNames();
+    List<String> listUserNames();
 
     // 根据用户id查找用户名
-    String findUserNameById(Integer id);
+    String getUserNameById(Integer id);
 
     // 获取验证码
     boolean getVerifCode(String mailAddress);
@@ -27,7 +27,7 @@ public interface UserService {
     boolean checkVerifCode(String mailAddress, String code);
 
     // 获取邮箱地址集合
-    List<String> findEmails();
+    List<String> listEmails();
 
     // 根据账号（可能是用户名也可能是邮箱）获取用户信息
     User getUserByAccount(String account);

@@ -7,16 +7,16 @@ import java.util.List;
 
 public interface AnecdoteService {
     // 查找Anecdotes列表
-    List<Anecdote> findListAnecdotes(String keyword, Integer pageNum);
+    List<Anecdote> listAnecdotes(String keyword, Integer pageNum);
 
     // 根据ID查找Anecdote
-    Anecdote findAnecdoteById(Integer id);
+    Anecdote getAnecdoteById(Integer id);
 
-    // 根据创建人id查找Anecdotes
-    List<Anecdote> findAnecsByCreUser(Integer createId);
+    // 根据创建人id查找Anecdotes列表
+    List<Anecdote> listAnecdotesByCreUser(Integer createId);
 
     // 添加Anecdote
-    int addAnecdote(Anecdote anecdote, MultipartFile file);
+    int saveAnecdote(Anecdote anecdote, MultipartFile file);
 
     // 更新Anecdote
     int updateAnecdote(Anecdote anecdote, Integer pageNum);
