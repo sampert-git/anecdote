@@ -12,6 +12,9 @@ import java.security.NoSuchAlgorithmException;
  * @version 1.0
  */
 public class EncryptUtil {
+
+    private EncryptUtil(){} // 构造函数私有化，不允许在外部创建工具类实例
+
     /**
      * 利用java原生的摘要实现SHA256加密
      *
