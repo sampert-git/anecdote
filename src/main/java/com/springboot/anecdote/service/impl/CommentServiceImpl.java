@@ -13,15 +13,15 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 /**
- * Class CommentServiceImpl
- * Description CommentService实现类
- * Date 2020/10/8 16:52
+ * CommentService 实现类
  *
  * @author Sampert
  * @version 1.0
+ * @date 2020/10/8 16:52
  */
 @Service
 public class CommentServiceImpl implements CommentService {
+
     private MongoTemplate mongoTemplate;
 
     @Autowired

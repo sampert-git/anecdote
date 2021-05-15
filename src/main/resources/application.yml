@@ -51,7 +51,7 @@ spring:
         max-active: 8
         max-wait: -1
         max-idle: 8
-        min-idle: 0
+        min-idle: 1
     timeout: 2000ms
 
   # MongoDB
@@ -63,7 +63,7 @@ spring:
   mail:
     host: smtp.qq.com
     username: castle_pink@qq.com
-    password: qiaouezzhqszheag
+    password: ntpdoslqnpmmjjdi
     protocol: smtp
     default-encoding: UTF-8
 
@@ -105,7 +105,7 @@ logging:
 #  %msg：日志消息，
 #  %n是换行符
 
-# 上传文件保存
-file:
-  location:
-    upload: file:E:/anecdote-upload/imgs/anec_imgs/
+# 文件（图片）上传路径
+my:
+  properties:
+    file-upload-location: file:E:/anecdote-upload/imgs/anec_imgs/

@@ -25,13 +25,12 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * Class AnecdoteServiceImpl
- * Description AnecdoteService实现类；
- * Date 2020/9/12 9:19
- *
+ * AnecdoteService 实现类
+ * 
  * @author Sampert
  * @version 1.0
- **/
+ * @date 2020/9/12 9:19
+ */
 @CacheConfig(cacheNames = "cacheAnecdote")
 @Service
 public class AnecdoteServiceImpl implements AnecdoteService {
@@ -42,9 +41,9 @@ public class AnecdoteServiceImpl implements AnecdoteService {
     private static final String CACHE_ANEC_LIST_PREFIX = "'anecList_'";
     private static final String CACHE_ANEC_PREFIX = "'anec_'";
     private static final String CACHE_ANEC_CRE_PREFIX = "'anecCre_'";
-    @Value("${file.location.upload}")
+    @Value("${my.properties.file-upload-location}")
     private String fileUploadLocation;
-    private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     @Autowired
     public AnecdoteServiceImpl(AnecdoteDao anecdoteDao) {
@@ -58,7 +57,7 @@ public class AnecdoteServiceImpl implements AnecdoteService {
         List<Anecdote> anecdotes = anecdoteDao.findListAnecdotes(keyword);
         for (Anecdote anecdote : anecdotes) {
             anecdote.setAnecImgPath(PATH_PREFIX + anecdote.getAnecImgPath());
-            anecdote.setAnecTimeStr(anecdote.getAnecCreateTime().format(formatter));
+            anecdote.setAnecTimeStr(anecdote.getAnecCreateTime().format(FORMATTER));
         }
         return anecdotes;
     }
@@ -69,7 +68,7 @@ public class AnecdoteServiceImpl implements AnecdoteService {
     public Anecdote getAnecdoteById(Integer id) {
         Anecdote anecdote = anecdoteDao.findAnecdoteById(id);
         anecdote.setAnecImgPath(PATH_PREFIX + anecdote.getAnecImgPath());
-        anecdote.setAnecTimeStr(anecdote.getAnecCreateTime().format(formatter));
+        anecdote.setAnecTimeStr(anecdote.getAnecCreateTime().format(FORMATTER));
         return anecdote;
     }
 
@@ -80,7 +79,7 @@ public class AnecdoteServiceImpl implements AnecdoteService {
         List<Anecdote> anecdotes = anecdoteDao.findAnecsByCreUser(createId);
         for (Anecdote anecdote : anecdotes) {
             anecdote.setAnecImgPath(PATH_PREFIX + anecdote.getAnecImgPath());
-            anecdote.setAnecTimeStr(anecdote.getAnecCreateTime().format(formatter));
+            anecdote.setAnecTimeStr(anecdote.getAnecCreateTime().format(FORMATTER));
         }
         return anecdotes;
     }

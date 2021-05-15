@@ -9,27 +9,35 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
- * Class MyMvcConfigurer
- * Description 应用配置类（实现的WebMvcConfigurer接口有多个可选实现的default方法）
- * Date 2020/9/21 20:41
+ * MVC配置类（实现的WebMvcConfigurer接口有多个可选实现的default方法）
  *
  * @author Sampert
  * @version 1.0
+ * @date 2020/9/21 20:41
  */
 @Configuration
 public class MyMvcConfigurer implements WebMvcConfigurer {
 
-    @Value("${file.location.upload}")
+    /** 文件（图片）上传路径 */
+    @Value("${my.properties.file-upload-location}")
     private String fileUploadLocation;
 
-    // 添加拦截器
+    /**
+     * 添加拦截器
+     * @param registry 拦截器注册机
+     * @return void
+     */
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         InterceptorRegistration registration = registry.addInterceptor(new UserInterceptor());
         registration.addPathPatterns("/client/**", "/admin/**", "/anec/list/*/admin", "/anec/list/*/admin/*");
     }
 
-    // 配置静态资源访问路径
+    /**
+     * 添加静态资源处理器
+     * @param registry 静态资源处理器注册机
+     * @return void
+     */
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/static/**").addResourceLocations("classpath:/static/");

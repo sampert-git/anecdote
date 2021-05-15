@@ -7,27 +7,35 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
- * Class Comment
- * Description Comment(评论)实体类
- * Date 2020/9/19 13:35
+ * 评论（Comment）实体类，评论数据存储于 MongoDB
  *
  * @author Sampert
  * @version 1.0
- **/
+ * @date 2020/9/19 13:35
+ */
 @Document(collection = "comment")
 public class Comment implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    /** 评论id */
     @Id
-    private String id;          // 唯一标识id
-    private Integer userId;     // 评论发表人id
-    private String userName;    // 发表人姓名
-    private LocalDateTime crateTime;     // 发表时间
-    private Integer anecId;     // 评论所属Anecdote的id
-    private String content;     // 评论内容
-    private Integer praise;     // 点赞数量
-    private String timeStr;     // 发表时间字符串表示；
+    private String id;
+    /** 评论发表人id */
+    private Integer userId;
+    /** 发表时间 */
+    private LocalDateTime crateTime;
+    /** 评论所属Anecdote的id */
+    private Integer anecId;
+    /** 评论内容 */
+    private String content;
+    /** 点赞数量 */
+    private Integer praise;
+
+    /** 评论发表人姓名（非数据库字段）*/
+    private String userName;
+    /** 发表时间字符串表示（非数据库字段）*/
+    private String timeStr;
 
     public String getTimeStr() {
         return timeStr;

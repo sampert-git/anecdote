@@ -21,10 +21,10 @@ public interface UserService {
     String getUserNameById(Integer id);
 
     // 获取验证码
-    boolean getVerifCode(String mailAddress);
+    boolean getVerifyCode(String mailAddress);
 
     // 验证码比对
-    boolean checkVerifCode(String mailAddress, String code);
+    boolean checkVerifyCode(String mailAddress, String code);
 
     // 获取邮箱地址集合
     List<String> listEmails();

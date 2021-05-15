@@ -11,6 +11,7 @@ import org.springframework.util.DigestUtils;
 import java.io.File;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
@@ -89,6 +90,60 @@ class MyTest{
         System.out.println(System.getProperty("user.dir")+File.separator);
         System.out.println(Paths.get(System.getProperty("user.dir")).getParent() +
                 File.separator+"anecdote-upload"+File.separator);
+    }
+
+    @Test
+    void testList() {
+        // 移除（或增加）List元素正例
+        List<String> list1 = new ArrayList<>(2);
+        list1.add("1");
+        list1.add("2");
+//        list1.removeIf("1"::equals);  // 此行(hang)为JDK8提供的方法
+        Iterator<String> iterator = list1.iterator();
+        while (iterator.hasNext()) {
+            String item = iterator.next();
+            if ("1".equals(item)) {
+                iterator.remove();
+            }
+        }
+        System.out.println("list1:" + list1.toString());
+
+        // 反例
+        List<String> list2 = new ArrayList<>(2);
+        list2.add("1");
+        list2.add("2");
+        for (String s : list2) {
+            if ("1".equals(s)) { // 1为条件结果同正例，2为条件抛异常 java.util.ConcurrentModificationException
+                list2.remove(s);
+            }
+        }
+        System.out.println("list2:" + list2.toString());
+    }
+
+    @Test
+    void testSwitch() {
+        switchMethod(null);
+    }
+
+    void switchMethod(String param) {
+        // 当 switch 括号内的变量类型为 String 并且此变量为外部参数时，必须先进行 null 判断
+        if (null == param) {
+            System.out.println("switch 参数空！");
+            return;
+        }
+        switch (param) { // 如果参数为 null ，会抛 NPE
+            // 肯定不是进入这里
+            case "sth":
+                System.out.println("it's sth");
+                break;
+            // 也不是进入这里
+            case "null":
+                System.out.println("it's null");
+                break;
+            // 也不是进入这里
+            default:
+                System.out.println("default");
+        }
     }
 }
 

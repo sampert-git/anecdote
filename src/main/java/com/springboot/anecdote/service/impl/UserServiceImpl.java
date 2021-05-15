@@ -21,12 +21,11 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Class UserServiceImpl
- * Description UserService实现类；
- * Date 2020/9/12 9:05
+ * UserService 实现类
  *
  * @author Sampert
  * @version 1.0
+ * @date 2020/9/12 9:05
  **/
 @CacheConfig(cacheNames = "cacheUser")
 @Service
@@ -46,18 +45,18 @@ public class UserServiceImpl implements UserService {
     public UserServiceImpl(UserDao userDao, JavaMailSender sender) {
         this.userDao = userDao;
         this.sender = sender;
-        map = new ConcurrentHashMap<>(16);    // TODO 不确定存放元素个数先写默认值16，确定后改为：个数/负载因子+1
-        executor = new ScheduledThreadPoolExecutor(2);    // TODO　核心池线程数（根据实际情况调整）
+        map = new ConcurrentHashMap<>(16);    // 不确定存放元素个数先写默认值16，确定后改为：个数/负载因子+1
+        executor = new ScheduledThreadPoolExecutor(2);    // 核心池线程数（根据实际情况调整）
         executor.setRemoveOnCancelPolicy(true); // 计划任务取消即删除
     }
 
     /**
-     * 发送验证码
+     * 获取验证码
      * @param mailAddress 接收验证码的邮箱地址
      * @return boolean 验证码发送成功返回true
      */
     @Override
-    public boolean getVerifCode(String mailAddress) {
+    public boolean getVerifyCode(String mailAddress) {
         try {
             map.remove(mailAddress);    // 每次获取验证码前确保map中没有旧残留
             SimpleMailMessage message = new SimpleMailMessage();
@@ -82,9 +81,14 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    // 验证码比对
+    /**
+     * 验证码比对
+     * @param mailAddress 获取验证码的邮箱
+     * @param code 验证码
+     * @return boolean 比对成功返回true ，比对不一致或验证码已过期返回 false
+     */
     @Override
-    public boolean checkVerifCode(String mailAddress, String code) {
+    public boolean checkVerifyCode(String mailAddress, String code) {
         // 无论是否验证通过，调用一次此方法后即触发邮件地址对应验证码清除
         String mapCode = map.get(mailAddress);
         if (mapCode != null && mapCode.equals(code)) {

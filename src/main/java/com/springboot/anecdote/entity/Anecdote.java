@@ -5,27 +5,37 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 /**
- * Class Anecdote
- * Description Anecdote(轶事)实体类；
- * Date 2020/9/11 18:47
+ * 轶事（Anecdote）实体类
  *
  * @author Sampert
  * @version 1.0
- **/
+ * @date 2020/9/11 18:47
+ */
 public class Anecdote implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private int anecId;             // 轶事id
-    private String anecPerson;      // 主人公
-    private String anecTitle;       // 标题
-    private String anecContent;     // 内容
-    private LocalDateTime anecCreateTime;    // 创建时间
-    private int anecCreateId;       // 创建人id
-    private String anecImgPath;     // 图片路径（只存文件名）
-    private String anecCreateName;  // 创建人名称
-    private List<Comment> comments; // 评论列表
-    private String anecTimeStr;     // 创建时间字符串形式
+    /** 轶事id */
+    private int anecId;
+    /** 主人公 */
+    private String anecPerson;
+    /** 标题 */
+    private String anecTitle;
+    /** 内容 */
+    private String anecContent;
+    /** 创建时间 */
+    private LocalDateTime anecCreateTime;
+    /** 创建人id */
+    private int anecCreateId;
+    /** 图片路径（只存文件名） */
+    private String anecImgPath;
+
+    /** 创建人名称（非数据库字段） */
+    private String anecCreateName;
+    /** 评论列表（非数据库字段） */
+    private List<Comment> comments;
+    /** 创建时间字符串形式（非数据库字段） */
+    private String anecTimeStr;
 
     public String getAnecTimeStr() {
         return anecTimeStr;

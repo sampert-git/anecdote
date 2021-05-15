@@ -10,20 +10,27 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Class UserInterceptor
- * Description 用户拦截器，检验用户登录状态及权限
- * Date 2020/9/21 20:15
+ * 用户（User）拦截器，检验用户登录状态及权限
  *
  * @author Sampert
  * @version 1.0
+ * @date 2020/9/21 20:15
  */
 public class UserInterceptor implements HandlerInterceptor {
 
+    /** self4j 日志记录实例 */
     private static final Logger logger = LoggerFactory.getLogger(UserInterceptor.class);
 
+    /**
+     * 拦截请求的前置处理
+     * @param request HTTP请求
+     * @param response HTTP响应
+     * @param handler 处理器
+     * @return boolean 请求放行返回 true，否则 false
+     * @throws Exception 任何可能的异常
+     */
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response,
-                             Object handler) throws Exception {
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         User user = (User) request.getSession().getAttribute("ANEC_USER_SESSION");
         if (user != null) {
             String servletPath = request.getServletPath();
@@ -43,15 +50,30 @@ public class UserInterceptor implements HandlerInterceptor {
         return false;
     }
 
+    /**
+     * 拦截请求正在执行中的处理
+     * @param request HTTP请求
+     * @param response HTTP响应
+     * @param handler 处理器
+     * @param modelAndView 模型视图
+     * @return void
+     */
     @Override
-    public void postHandle(HttpServletRequest request, HttpServletResponse response,
-                           Object handler, ModelAndView modelAndView) {
+    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
+                           ModelAndView modelAndView) {
         logger.debug("处理中请求：" + request.getRequestURI());
     }
 
+    /**
+     * 拦截请求的后置处理
+     * @param request HTTP请求
+     * @param response HTTP响应
+     * @param handler 处理器
+     * @param ex 异常情况
+     * @return void
+     */
     @Override
-    public void afterCompletion(HttpServletRequest request, HttpServletResponse response,
-                                Object handler, Exception ex) {
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
         logger.debug("完成请求：" + request.getRequestURI());
     }
 }
