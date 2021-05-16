@@ -76,10 +76,10 @@ public class UserController {
         if (PATTERN_PWD.matcher(user.getUserPwd()).matches()) {
             int result = userService.userRegister(user);
             if (result > 0) {
-                LOGGER.info("用户" + user.getUserName() + "(email=" + user.getUserEmail() + ")注册成功！");
+                LOGGER.info("用户:{}(email = {})注册成功！", user.getUserName(), user.getUserEmail());
                 return "ok";
             } else {
-                LOGGER.info("用户" + user.getUserName() + "(email=" + user.getUserEmail() + ")注册失败！");
+                LOGGER.info("用户:{}(email = {})注册失败！", user.getUserName(), user.getUserEmail());
                 return "fail";
             }
         }
@@ -114,11 +114,11 @@ public class UserController {
     public String userLogin(@RequestParam("account") String account, @RequestParam("pwd") String pwd, HttpSession session) {
         User user = userService.userLogin(account, pwd);
         if (user == null) {
-            LOGGER.warn("用户" + account + "登录失败！");
+            LOGGER.warn("用户:{} 登录失败！", account);
             return "fail";
         }
         session.setAttribute("ANEC_USER_SESSION", user);
-        LOGGER.info("用户" + user.getUserName() + "(id=" + user.getUserId() + ")登录成功！");
+        LOGGER.info("用户:{} (id = {}) 登录成功！", user.getUserName(), user.getUserId());
         return "ok";
     }
 
@@ -131,7 +131,7 @@ public class UserController {
     @GetMapping("/user/logout")
     public String userLogout(HttpServletResponse response, HttpSession session) {
         User user = (User) session.getAttribute("ANEC_USER_SESSION");
-        LOGGER.info("用户" + user.getUserName() + "(id=" + user.getUserId() + ")退出登录！");
+        LOGGER.info("用户:{}(id = {})退出登录！", user.getUserName(), user.getUserId());
         session.removeAttribute("ANEC_USER_SESSION");
         Cookie cookie = new Cookie("anec_login_account", "");
         cookie.setPath("/");

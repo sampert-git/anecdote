@@ -56,7 +56,7 @@ public class AnecdoteController {
         if (account != null && session.getAttribute("ANEC_USER_SESSION") == null) {
             User user = userService.getUserByAccount(account);
             session.setAttribute("ANEC_USER_SESSION", user);
-            LOGGER.info("用户" + user.getUserName() + "(id=" + user.getUserId() + ")通过cookie登录成功！");
+            LOGGER.info("用户：{}（id={}）通过cookie登录成功！", user.getUserName(), user.getUserId());
         }
         // 装配分页信息
         PageHelper.startPage(pageNum, PAGE_SIZE);
@@ -138,7 +138,7 @@ public class AnecdoteController {
             // 删除Anecdote对应图片（anecImgPath 形如 xxx.jpg）
             if (!anecdoteService.deleteAnecImg(anecImgPath)) {
                 // 图片删除失败的处理……
-                LOGGER.warn("图片删除失败！anecId = " + anecId + " anecImgPath = " + anecImgPath);
+                LOGGER.warn("图片删除失败！anecId = {}, anecImgPath = {}", anecId, anecImgPath);
             }
             return "ok";
         } else

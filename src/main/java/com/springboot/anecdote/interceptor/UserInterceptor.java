@@ -41,12 +41,12 @@ public class UserInterceptor implements HandlerInterceptor {
             } else {
                 response.setContentType("text/html;charset=utf-8");
                 response.getWriter().write("<h2 style='color: #f00;'>权限不足！</h2>");
-                logger.warn("拦截越权请求：" + request.getRequestURI());
+                logger.warn("拦截越权请求：{}", request.getRequestURI());
                 return false;
             }
         }
         response.sendRedirect(request.getContextPath() + "/user/login");
-        logger.warn("拦截未登录请求：" + request.getRequestURI());
+        logger.warn("拦截未登录请求：{}", request.getRequestURI());
         return false;
     }
 
@@ -61,7 +61,7 @@ public class UserInterceptor implements HandlerInterceptor {
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
                            ModelAndView modelAndView) {
-        logger.debug("处理中请求：" + request.getRequestURI());
+        logger.info("处理中请求：{}", request.getRequestURI());
     }
 
     /**
@@ -74,6 +74,6 @@ public class UserInterceptor implements HandlerInterceptor {
      */
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
-        logger.debug("完成请求：" + request.getRequestURI());
+        logger.info("完成请求：{}", request.getRequestURI());
     }
 }

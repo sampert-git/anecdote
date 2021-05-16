@@ -152,7 +152,7 @@ public class UserServiceImpl implements UserService {
             if (userNameList == null) {
                 userNameList = new ArrayList<>(2);
             }
-            LOGGER.info("从缓存获取用户名列表：" + userNameList.toString());
+            LOGGER.info("从缓存获取用户名列表：{}", userNameList.toString());
             return userNameList;
         }
         // 没有缓存，则先从数据库获取数据，再放入缓存
@@ -172,7 +172,7 @@ public class UserServiceImpl implements UserService {
             if (emailList == null) {
                 emailList = new ArrayList<>(2);
             }
-            LOGGER.info("从缓存获取邮箱列表：" + emailList.toString());
+            LOGGER.info("从缓存获取邮箱列表：{}", emailList.toString());
             return emailList;
         }
         // 没有缓存，则先从数据库获取数据，再放入缓存
