@@ -152,7 +152,10 @@ public class UserServiceImpl implements UserService {
             if (userNameList == null) {
                 userNameList = new ArrayList<>(2);
             }
-            LOGGER.info("从缓存获取用户名列表：{}", userNameList.toString());
+            // 对于 trace/debug/info 级别的日志输出，先进行日志级别的开关判断
+            if (LOGGER.isInfoEnabled()) {
+                LOGGER.info("从缓存获取用户名列表：{}", userNameList.toString());
+            }
             return userNameList;
         }
         // 没有缓存，则先从数据库获取数据，再放入缓存

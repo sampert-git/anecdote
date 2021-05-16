@@ -41,7 +41,7 @@ public class UserInterceptor implements HandlerInterceptor {
             } else {
                 response.setContentType("text/html;charset=utf-8");
                 response.getWriter().write("<h2 style='color: #f00;'>权限不足！</h2>");
-                logger.warn("拦截越权请求：{}", request.getRequestURI());
+                logger.warn("拦截越权请求：{}，来自用户：{}(id = {})", request.getRequestURI(), user.getUserName(), user.getUserId());
                 return false;
             }
         }
