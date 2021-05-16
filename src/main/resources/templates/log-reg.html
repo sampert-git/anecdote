@@ -222,7 +222,11 @@
 										},3000);
 									}else {
 										msg_reg.css("color","#f00");
-										msg_reg.text("注册失败，请稍候重试！");
+										if (data === "fail") {
+											msg_reg.text("注册失败，请稍候重试！");
+										} else {
+											msg_reg.text(data);  // 后端返回的提示信息：密码使用6-20位大小写英文或数字！
+										}
 										$("#btn-reg").text("注 册");
 									}
 								})

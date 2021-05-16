@@ -13,6 +13,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * 用户（User）控制器
@@ -26,6 +27,8 @@ public class UserController {
 
     /** UserService 用户服务实例 */
     private UserService userService;
+    /** 用户密码匹配器（6-20位大、小写英文或数字） */
+    private static final Pattern PATTERN_PWD = Pattern.compile("^[A-Za-z0-9]{6,20}$");
     /** self4j 日志记录器 */
     private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
 
@@ -70,14 +73,17 @@ public class UserController {
     @PostMapping("/user/register")
     @ResponseBody
     public String userRegister(User user) {
-        int result = userService.userRegister(user);
-        if (result > 0) {
-            LOGGER.info("用户" + user.getUserName() + "(email=" + user.getUserEmail() + ")注册成功！");
-            return "ok";
-        } else {
-            LOGGER.info("用户" + user.getUserName() + "(email=" + user.getUserEmail() + ")注册失败！");
-            return "fail";
+        if (PATTERN_PWD.matcher(user.getUserPwd()).matches()) {
+            int result = userService.userRegister(user);
+            if (result > 0) {
+                LOGGER.info("用户" + user.getUserName() + "(email=" + user.getUserEmail() + ")注册成功！");
+                return "ok";
+            } else {
+                LOGGER.info("用户" + user.getUserName() + "(email=" + user.getUserEmail() + ")注册失败！");
+                return "fail";
+            }
         }
+        return "密码请使用6-20位大小写英文或数字！";
     }
 
     /**
