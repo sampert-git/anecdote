@@ -3,34 +3,34 @@
 ## 项目简介
 `anecdote`旨在为用户提供了解及分享古今中外各路名人之奇闻轶事的web平台，功能包括：
 
-- 邮箱注册/登录
-- 首页列表展示
+- 注册（邮箱验证）/登录
+- 首页列表展示、单个详情阅览
 - 帖子搜索
 - 帖子发表
 - 评论及评论点赞
 - 后台管理
 
 ## 项目演示
-[视频演示地址](https://v.youku.com/v_show/id_XNDkxMDI4NDMyNA==.html)
+[点击查看视频演示](https://v.youku.com/v_show/id_XNDkxMDI4NDMyNA==.html)
 
 ## 技术选型
 
 ### 后端
 | 元素 | 说明 |
 | ---- | ---- |
-| Springboot | 容器+MVC框架 |
+| Springboot | 容器 + MVC框架 |
 | Mybatis | ORM框架 |
-| PageHelper | 分页插件 |
-| Redis | 数据缓存 |
-| MongoDB | NoSQL数据库 |
+| MySQL | 数据库 |
 | Druid | 数据库连接池 |
-| Slf4j+logback | 日志收集 |
+| PageHelper | 物理分页插件 |
+| Redis | 缓存 |
+| MongoDB | NoSQL数据库 |
 
 ### 前端
 | 元素 | 说明 |
 | ---- | ---- |
-| Bootstrap | UI框架 |
 | Thymeleaf | 模板引擎 |
+| Bootstrap | UI框架 |
 
 ## 开发环境
 
